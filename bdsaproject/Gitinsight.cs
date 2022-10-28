@@ -1,12 +1,14 @@
-namespace Gitinsight;
+namespace app;
 
-public class Gitinsight
+public class GitInsight
 {
     private Repository repo;
 
-    public Gitinsight(String path)
+    public GitInsight(String path, String mode)
     {
         repo = new Repository(@path);
+
+        // håndter mode og execute noget
     }
 
 

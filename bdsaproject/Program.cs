@@ -1,31 +1,32 @@
-﻿namespace Gitinsight;
+﻿namespace app;
 
 public class Program
 {
+
     public static void Main(String[] args)
     {
-        Console.WriteLine(@"GitInsights");
-        Console.WriteLine("=================");
-        Console.WriteLine("Enter path to git project:");
+        String path = null;
+        String mode = null;
 
-        string path = Console.ReadLine();
-        Gitinsight GitInsight = new Gitinsight(path);
-        // håndter path error
-        // hvis fejl
-        // while(fejl) Console.WriteLine("Error in path, please try again: ");
-
-        Console.WriteLine("Successfully, connected to " + GitInsight.getRepoName());
-        String mode = "1";
-        while (mode != "3")
+        foreach (string arg in args)
         {
-            Console.WriteLine("[1] Commit Frequency");
-            Console.WriteLine("[2] Commit Author");
-            Console.WriteLine("[3] Exit");
-
-            mode = Console.ReadLine();
-            GitInsight.getCommits(mode);
+            for (int i = 0; i < args.Length; i++)
+            {
+                if (args[i].StartsWith("-path"))
+                {
+                    path = args[i + 1];
+                }
+                if (args[i].StartsWith("-mode"))
+                {
+                    mode = args[i + 1];
+                }
+            }
         }
 
-        // C:\Users\maxem\OneDrive - ITU\3. Semester\ADSA\Project\bdsaproject
+        if(!String.IsNullOrEmpty(path) && !String.IsNullOrEmpty(mode)) {
+          GitInsight git = new GitInsight(path, mode);
+        } else {
+          Console.WriteLine("Missing arguments");
+        }
     }
 }
