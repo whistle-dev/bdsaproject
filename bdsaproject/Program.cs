@@ -9,7 +9,7 @@ public class Program
         Console.WriteLine("Enter path to git project:");
 
         string path = Console.ReadLine();
-        Gitinsight GitInsight = new Gitinsight(path);
+        Gitinsight GitInsight = new Gitinsight(path, "1");
         // håndter path error
         // hvis fejl
         // while(fejl) Console.WriteLine("Error in path, please try again: ");
@@ -23,7 +23,7 @@ public class Program
             Console.WriteLine("[3] Exit");
 
             mode = Console.ReadLine();
-            GitInsight.getCommits(mode);
+            GitInsight.getCommits();
         }
 
         // C:\Users\maxem\OneDrive - ITU\3. Semester\ADSA\Project\bdsaproject
