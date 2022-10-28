@@ -1,24 +1,42 @@
-namespace Gitinsight;
+namespace app;
 
-public class Gitinsight
+public class GitInsight
 {
     private Repository repo;
 
-    public Gitinsight(String path)
+    public String Mode;
+
+    public GitInsight(String path, String mode)
     {
         repo = new Repository(@path);
+        Mode = mode;
+        getCommits();
+
+        // håndter mode og execute noget
     }
 
 
-    public void getCommits(string mode)
+    public void getCommits()
     {
-        if (mode == "1")
+        if (Mode == "1")
         {
-            getCommitsFrequency();
+            foreach (var commit in getCommitsFrequency())
+            {
+                Console.WriteLine(commit.Value + " " + commit.Key.ToString("dd/MM/yyyy"));
+            }
         }
-        else if (mode == "2")
+        else if (Mode == "2")
         {
-            getCommitsAuthor();
+            foreach (var author in getCommitsAuthor())
+            {
+                Console.WriteLine(author.Key);
+                foreach (var commit in author.Value)
+                {
+                    Console.WriteLine(commit.Value + " " + commit.Key.ToString("dd/MM/yyyy"));
+                }
+                Console.WriteLine();
+            }
+            
         }
     }
 
@@ -28,7 +46,7 @@ public class Gitinsight
         return repo.Info.WorkingDirectory;
     }
 
-    private void getCommitsFrequency()
+    private Dictionary<DateTime, int> getCommitsFrequency()
     {
         var commits = repo.Commits;
         var commitsByDate = new Dictionary<DateTime, int>();
@@ -45,13 +63,10 @@ public class Gitinsight
             }
         }
 
-        foreach (var commit in commitsByDate)
-        {
-            Console.WriteLine(commit.Value + " " + commit.Key.ToString("dd/MM/yyyy"));
-        }
+        return commitsByDate;
     }
 
-    private void getCommitsAuthor()
+    private Dictionary<string, Dictionary<DateTime, int>> getCommitsAuthor()
     {
         var commits = repo.Commits;
         var commitsByAuthor = new Dictionary<string, Dictionary<DateTime, int>>();
@@ -77,15 +92,7 @@ public class Gitinsight
             }
         }
 
-        foreach (var author in commitsByAuthor)
-        {
-            Console.WriteLine(author.Key);
-            foreach (var commit in author.Value)
-            {
-                Console.WriteLine(commit.Value + " " + commit.Key.ToString("dd/MM/yyyy"));
-            }
-            Console.WriteLine();
-        }
+        return commitsByAuthor;
     }
 
 }
