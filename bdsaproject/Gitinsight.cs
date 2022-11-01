@@ -4,9 +4,9 @@ public class GitInsight
 {
     private Repository repo;
 
-    public String Mode;
+    public char Mode;
 
-    public GitInsight(String path, String mode)
+    public GitInsight(String path, char mode)
     {
         repo = new Repository(@path);
         Mode = mode;
@@ -18,14 +18,14 @@ public class GitInsight
 
     public void getCommits()
     {
-        if (Mode == "1")
+        if (Mode == 'f')
         {
             foreach (var commit in getCommitsFrequency())
             {
                 Console.WriteLine(commit.Value + " " + commit.Key.ToString("dd/MM/yyyy"));
             }
         }
-        else if (Mode == "2")
+        else if (Mode == 'a')
         {
             foreach (var author in getCommitsAuthor())
             {
