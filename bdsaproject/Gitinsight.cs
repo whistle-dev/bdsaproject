@@ -32,11 +32,11 @@ public class GitInsight
                 Console.WriteLine(author.Key);
                 foreach (var commit in author.Value)
                 {
-                    Console.WriteLine(commit.Value + " " + commit.Key.ToString("dd/MM/yyyy"));
+                    Console.WriteLine("".PadLeft(5) + commit.Value + " " + commit.Key.ToString("dd/MM/yyyy"));
                 }
                 Console.WriteLine();
             }
-            
+
         }
     }
 
