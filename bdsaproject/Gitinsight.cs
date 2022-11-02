@@ -14,8 +14,6 @@ public class GitInsight
 
         // håndter mode og execute noget
     }
-
-
     public void getCommits()
     {
         if (Mode == 'f')
@@ -38,12 +36,6 @@ public class GitInsight
             }
 
         }
-    }
-
-
-    public string getRepoName()
-    {
-        return repo.Info.WorkingDirectory;
     }
 
     private Dictionary<DateTime, int> getCommitsFrequency()
