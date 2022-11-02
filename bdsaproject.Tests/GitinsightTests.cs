@@ -27,25 +27,25 @@ public class GitInsightTests
         // 2x
         for (int i = 0; i < 2; i++)
         {
-            commitlist.Add(setupMockCommit(new Mock<Commit>(), committer1, "committer1 message " + i));
+            commitlist.Add(SetupMockCommit(new Mock<Commit>(), committer1, "committer1 message" + i));
         }
 
         // 3x
         for (int i = 0; i < 3; i++)
         {
-            commitlist.Add(setupMockCommit(new Mock<Commit>(), committer2, "committer2 message " + i));
+            commitlist.Add(SetupMockCommit(new Mock<Commit>(), committer2, "committer2 message" + i));
         }
 
         // 4x
         for (int i = 0; i < 4; i++)
         {
-            commitlist.Add(setupMockCommit(new Mock<Commit>(), committer3, "committer3 message " + i));
+            commitlist.Add(SetupMockCommit(new Mock<Commit>(), committer3, "committer3 message" + i));
         }
 
         // 5x
         for (int i = 0; i < 5; i++)
         {
-            commitlist.Add(setupMockCommit(new Mock<Commit>(), committer4, "committer4 message " + i));
+            commitlist.Add(SetupMockCommit(new Mock<Commit>(), committer4, "committer4 message" + i));
         }
 
         // Setup mock commits
@@ -57,7 +57,7 @@ public class GitInsightTests
         _Repository.Setup(r => r.Commits).Returns(commits.Object);
     }
 
-    public Commit setupMockCommit(Mock<Commit> commit, Signature committer, string msg)
+    public Commit SetupMockCommit(Mock<Commit> commit, Signature committer, string msg)
     {
         commit.SetupGet(c => c.Committer).Returns(committer);
         commit.SetupGet(c => c.Author).Returns(committer);
