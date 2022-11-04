@@ -11,8 +11,6 @@ public class GitInsight
         repo = new Repository(@path);
         Mode = mode;
         getCommits();
-
-
     }
     public void getCommits()
     {
