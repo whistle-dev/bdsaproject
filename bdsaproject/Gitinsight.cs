@@ -12,7 +12,7 @@ public class GitInsight
         Mode = mode;
         getCommits();
 
-        // håndter mode og execute noget
+
     }
     public void getCommits()
     {
@@ -58,7 +58,7 @@ public class GitInsight
         return commitsByDate;
     }
 
-    private Dictionary<string, Dictionary<DateTime, int>> getCommitsAuthor()
+    public Dictionary<string, Dictionary<DateTime, int>> getCommitsAuthor()
     {
         var commits = repo.Commits;
         var commitsByAuthor = new Dictionary<string, Dictionary<DateTime, int>>();
