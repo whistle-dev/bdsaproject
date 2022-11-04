@@ -11,11 +11,7 @@ public class GitInsight
         repo = new Repository(@path);
         Mode = mode;
         getCommits();
-
-        // håndter mode og execute noget
     }
-
-
     public void getCommits()
     {
         if (Mode == 'f')
@@ -40,12 +36,6 @@ public class GitInsight
         }
     }
 
-
-    public string getRepoName()
-    {
-        return repo.Info.WorkingDirectory;
-    }
-
     private Dictionary<DateTime, int> getCommitsFrequency()
     {
         var commits = repo.Commits;
@@ -66,7 +56,7 @@ public class GitInsight
         return commitsByDate;
     }
 
-    private Dictionary<string, Dictionary<DateTime, int>> getCommitsAuthor()
+    public Dictionary<string, Dictionary<DateTime, int>> getCommitsAuthor()
     {
         var commits = repo.Commits;
         var commitsByAuthor = new Dictionary<string, Dictionary<DateTime, int>>();
