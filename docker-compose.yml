@@ -1,0 +1,10 @@
+version: "3.9"
+services:
+    db:
+        hostname: bdsa-db
+        ports:
+            - "5432:5432"
+        image: "mcr.microsoft.com/mssql/server:2022-latest"
+        environment:
+            SA_PASSWORD: "SMBbdsaproject1"
+            ACCEPT_EULA: "Y"
