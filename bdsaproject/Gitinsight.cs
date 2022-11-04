@@ -11,8 +11,6 @@ public class GitInsight
         repo = new Repository(@path);
         Mode = mode;
         printCommits();
-
-        // håndter mode og execute noget
     }
 
     public GitInsight(IRepository _repo, char mode)
@@ -43,12 +41,6 @@ public class GitInsight
             }
 
         }
-    }
-
-
-    public string getRepoName()
-    {
-        return repo.Info.WorkingDirectory;
     }
 
     public dynamic getCommits()

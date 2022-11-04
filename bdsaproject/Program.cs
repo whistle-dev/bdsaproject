@@ -1,4 +1,5 @@
 ﻿namespace app;
+using static Connection;
 
 public class Program
 {
@@ -10,7 +11,6 @@ public class Program
         [Option('m', "mode", Required = true, HelpText = "Mode 'f' for frequency mode, mode 'a' for author mode")]
         public char Mode { get; set; }
     }
-
     public static void Main(String[] args)
     {
         Parser.Default.ParseArguments<Options>(args)
@@ -18,7 +18,13 @@ public class Program
             {
                 if (o.Mode == 'a' || o.Mode == 'f')
                 {
-                    GitInsight git = new GitInsight(o.Path, o.Mode);
+                    Connection connection = new Connection();
+                    // GitInsight git = new GitInsight(o.Path, o.Mode);
+                    GitInsight git = new GitInsight(o.Path, 'a'); // Only author mode implemented for db
+                    connection.createDB();
+                    connection.createTable();
+                    connection.insertCommits(git.getCommits());
+                    //connection.selectCommits();
                 }
                 else
                 {
