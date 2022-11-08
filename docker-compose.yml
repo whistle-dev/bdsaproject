@@ -4,7 +4,7 @@ services:
         hostname: bdsa-db
         ports:
             - "1433:1433"
-        image: "mcr.microsoft.com/mssql/server:2022-latest"
+        image: "mcr.microsoft.com/azure-sql-edge"
         environment:
             SA_PASSWORD: "SMBbdsaproject1"
             ACCEPT_EULA: "Y"
