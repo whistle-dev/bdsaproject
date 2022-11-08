@@ -2,30 +2,37 @@ namespace app;
 
 public class GitInsight
 {
-    private Repository repo;
+    private IRepository _repo;
 
     public char Mode;
 
-    public GitInsight(String path, char mode)
-    {
-        repo = new Repository(@path);
-        Mode = mode;
-        getCommits();
-
-
+    public GitInsight(String path, char mode) : this(new Repository(@path), mode) {
+        printCommits();
     }
-    public void getCommits()
+
+    public GitInsight(IRepository repo, char mode)
+    {
+        _repo = repo;
+
+        if (mode != 'a' && mode != 'f')
+        {
+            throw new ArgumentException("Invalid mode");
+        }
+        Mode = mode;        
+    }
+
+    public void printCommits()
     {
         if (Mode == 'f')
         {
-            foreach (var commit in getCommitsFrequency())
+            foreach (var commit in getCommits())
             {
                 Console.WriteLine(commit.Value + " " + commit.Key.ToString("dd/MM/yyyy"));
             }
         }
         else if (Mode == 'a')
         {
-            foreach (var author in getCommitsAuthor())
+            foreach (var author in getCommits())
             {
                 Console.WriteLine(author.Key);
                 foreach (var commit in author.Value)
@@ -38,9 +45,25 @@ public class GitInsight
         }
     }
 
+    public dynamic getCommits()
+    {
+        if (Mode == 'f')
+        {
+            return getCommitsFrequency();
+        }
+        else if (Mode == 'a')
+        {
+            return getCommitsAuthor();
+        }
+        else
+        {
+            return null;
+        }
+    }
+
     private Dictionary<DateTime, int> getCommitsFrequency()
     {
-        var commits = repo.Commits;
+        var commits = _repo.Commits;
         var commitsByDate = new Dictionary<DateTime, int>();
         foreach (var commit in commits)
         {
@@ -58,9 +81,9 @@ public class GitInsight
         return commitsByDate;
     }
 
-    public Dictionary<string, Dictionary<DateTime, int>> getCommitsAuthor()
+    private Dictionary<string, Dictionary<DateTime, int>> getCommitsAuthor()
     {
-        var commits = repo.Commits;
+        var commits = _repo.Commits;
         var commitsByAuthor = new Dictionary<string, Dictionary<DateTime, int>>();
         foreach (var commit in commits)
         {
