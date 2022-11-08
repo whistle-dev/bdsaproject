@@ -55,7 +55,7 @@ public class GitInsightTests
     }
 
     [Fact]
-    public void GitInsight_Constructor_Throws_No_Exceptions()
+    public void GitInsight_Constructor_Should_Throw_No_Exceptions()
     {
         // Act
         Action act = () => new GitInsight(_Repository.Object, 'f');
@@ -65,7 +65,7 @@ public class GitInsightTests
     }
 
     [Fact]
-    public void GitInsight_Constructor_Throws_Exception()
+    public void GitInsight_Constructor_Should_Throw_Exception()
     {
         // Act
         Action act = () => new GitInsight("wrong/path", 'f');
@@ -77,7 +77,7 @@ public class GitInsightTests
     }
 
     [Fact]
-    public void GitInsight_Constructor_Throws_ArgumentException()
+    public void GitInsight_Constructor_Should_Throw_ArgumentException()
     {
         // Act
         Action act = () => new GitInsight(_Repository.Object, 'x');
@@ -87,7 +87,7 @@ public class GitInsightTests
     }
 
     [Fact]
-    public void GetCommits_Frequency_Mode_Returns_Expected_Value()
+    public void GetCommits_Frequency_Mode_Should_Return_Expected_Value()
     {
         // Arrange
         GitInsight git = new GitInsight(_Repository.Object, 'f');
@@ -108,7 +108,7 @@ public class GitInsightTests
     }
 
     [Fact]
-    public void GetCommits_Author_Mode_Returns_Expected_Value()
+    public void GetCommits_Author_Mode_Should_Return_Expected_Value()
     {
         // Arrange
         GitInsight git = new GitInsight(_Repository.Object, 'a');
