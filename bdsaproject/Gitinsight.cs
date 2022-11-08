@@ -2,21 +2,23 @@ namespace app;
 
 public class GitInsight
 {
-    private IRepository repo;
+    private IRepository _repo;
 
     public char Mode;
 
-    public GitInsight(String path, char mode)
-    {
-        repo = new Repository(@path);
-        Mode = mode;
+    public GitInsight(String path, char mode) : this(new Repository(@path), mode) {
         printCommits();
     }
 
-    public GitInsight(IRepository _repo, char mode)
+    public GitInsight(IRepository repo, char mode)
     {
-        repo = _repo;
-        Mode = mode;
+        _repo = repo;
+
+        if (mode != 'a' && mode != 'f')
+        {
+            throw new ArgumentException("Invalid mode");
+        }
+        Mode = mode;        
     }
 
     public void printCommits()
@@ -61,7 +63,7 @@ public class GitInsight
 
     private Dictionary<DateTime, int> getCommitsFrequency()
     {
-        var commits = repo.Commits;
+        var commits = _repo.Commits;
         var commitsByDate = new Dictionary<DateTime, int>();
         foreach (var commit in commits)
         {
@@ -81,7 +83,7 @@ public class GitInsight
 
     private Dictionary<string, Dictionary<DateTime, int>> getCommitsAuthor()
     {
-        var commits = repo.Commits;
+        var commits = _repo.Commits;
         var commitsByAuthor = new Dictionary<string, Dictionary<DateTime, int>>();
         foreach (var commit in commits)
         {
