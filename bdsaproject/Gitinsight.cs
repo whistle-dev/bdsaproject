@@ -57,7 +57,7 @@ public class GitInsight
         }
         else
         {
-            return null;
+            throw new ArgumentException("Invalid mode");
         }
     }
 

@@ -10,8 +10,8 @@ public class GitInsightTests
         _Repository = new MockRepository(MockBehavior.Default).Create<IRepository>();
 
         // Setup DateTimeOffsets for authors
-        DateTimeOffset date1 = new DateTimeOffset(2022, 10, 28, 0, 0, 0, new TimeSpan(1, 0, 0));
-        DateTimeOffset date2 = new DateTimeOffset(2022, 11, 1, 0, 0, 0, new TimeSpan(1, 0, 0));
+        DateTimeOffset date1 = new DateTimeOffset(new DateTime(2022, 10, 28));
+        DateTimeOffset date2 = new DateTimeOffset(new DateTime(2022, 11, 1));
 
         // Setup authors
         Signature nillerDate1 = new Signature("niller", "niller@hotmail.dk", date1);
