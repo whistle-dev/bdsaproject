@@ -6,8 +6,19 @@ public class GitInsight
 
     public char Mode;
 
-    public GitInsight(String path, char mode) : this(new Repository(@path), mode) {
-        printCommits();
+    public GitInsight(String url, char mode)
+    {
+        Console.WriteLine("Cloning repository ...");
+        string path = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\Downloads\\GitInsight";
+
+        if (Directory.Exists(path))
+        {
+            removeRepo();
+        }
+        Repository.Clone(url, path);
+        Console.WriteLine("Repository cloned.");
+        _repo = new Repository(path);
+        Mode = mode;
     }
 
     public GitInsight(IRepository repo, char mode)
@@ -18,29 +29,25 @@ public class GitInsight
         {
             throw new ArgumentException("Invalid mode");
         }
-        Mode = mode;        
+        Mode = mode;
     }
 
-    public void printCommits()
+    public void removeRepo()
     {
-        if (Mode == 'f')
+        try
         {
-            foreach (var commit in getCommits())
+            string path = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\Downloads\\GitInsight";
+
+            var directory = new DirectoryInfo(path) { Attributes = FileAttributes.Normal };
+
+            foreach (var info in directory.GetFileSystemInfos("*", SearchOption.AllDirectories))
             {
-                Console.WriteLine(commit.Value + " " + commit.Key.ToString("dd/MM/yyyy"));
+                info.Attributes = FileAttributes.Normal;
             }
+            Directory.Delete(path, true);
         }
-        else if (Mode == 'a')
+        catch (System.Exception)
         {
-            foreach (var author in getCommits())
-            {
-                Console.WriteLine(author.Key);
-                foreach (var commit in author.Value)
-                {
-                    Console.WriteLine("".PadLeft(5) + commit.Value + " " + commit.Key.ToString("dd/MM/yyyy"));
-                }
-                Console.WriteLine();
-            }
 
         }
     }

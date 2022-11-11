@@ -19,12 +19,13 @@ public class Program
                 if (o.Mode == 'a' || o.Mode == 'f')
                 {
                     Connection connection = new Connection();
-                    // GitInsight git = new GitInsight(o.Path, o.Mode);
-                    GitInsight git = new GitInsight(o.Path, 'a'); // Only author mode implemented for db
+                    GitInsight git = new GitInsight(o.Path, o.Mode);
                     connection.createDB();
                     connection.createTable();
                     connection.insertCommits(git.getCommits());
                     //connection.selectCommits();
+                    git.removeRepo();
+
                 }
                 else
                 {
