@@ -6,12 +6,14 @@ public class Connection : IDisposable
     private readonly SqlConnection _connection;
     public Connection()
     {
+        Console.WriteLine("Connecting to SQLserver...");
         _builder = new SqlConnectionStringBuilder();
         _builder.DataSource = "localhost";
         _builder.UserID = "sa";
         _builder.Password = "SMBbdsaproject1";
         _connection = new SqlConnection(_builder.ConnectionString);
         _connection.Open();
+        Console.WriteLine("Connected to SQLserver.");
     }
 
     public void createDB()
