@@ -4,3 +4,6 @@ global using CommandLine;
 global using Microsoft.EntityFrameworkCore;
 global using System.Data.SqlClient;
 global using System.Text;
+global using GitInsight.Infrastructure;
+global using Microsoft.Extensions.Configuration;
+global using Microsoft.EntityFrameworkCore.Design;
