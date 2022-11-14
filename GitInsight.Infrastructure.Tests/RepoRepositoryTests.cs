@@ -20,9 +20,9 @@ public class RepoRepositoryTests : IDisposable
         context.Database.EnsureCreated();
 
         // Seed the database with test data.
-        Repo repo1 = new Repo("hash1","name1");
-        Repo repo2 = new Repo("hash2", "name2");
-        Repo repo3 = new Repo("hash3", "name3");
+        Repo repo1 = new Repo(1,"name1");
+        Repo repo2 = new Repo(2, "name2");
+        Repo repo3 = new Repo(3, "name3");
 
         context.Repos.AddRange(repo1, repo2, repo3);
 
@@ -36,7 +36,7 @@ public class RepoRepositoryTests : IDisposable
     public void Create_Should_Create_Repo()
     {
         // Arrange
-        RepoCreateDTO repo = new RepoCreateDTO("hash4", "name4");
+        RepoCreateDTO repo = new RepoCreateDTO(4, "name4");
 
         // Act
         _repoRepository.Create(repo);
@@ -49,7 +49,7 @@ public class RepoRepositoryTests : IDisposable
     public void Create_Should_Throw_ArgumentException()
     {
         // Arrange
-        RepoCreateDTO repo = new RepoCreateDTO("hash1", "name1");
+        RepoCreateDTO repo = new RepoCreateDTO(1, "name1");
 
         // Act
         Action action = () => _repoRepository.Create(repo);
@@ -63,21 +63,21 @@ public class RepoRepositoryTests : IDisposable
     public void Find_Should_Return_Repo()
     {
         // Arrange
-        string hash = "hash1";
+        int hash = 1;
 
         // Act
         RepoDTO? repo = _repoRepository.Find(hash);
 
         // Assert
         repo.Should().NotBeNull();
-        repo.Should().BeEquivalentTo(new RepoDTO("hash1", "name1"));
+        repo.Should().BeEquivalentTo(new RepoDTO(1, "name1"));
     }
 
     [Fact]
     public void Find_Should_Return_Null()
     {
         // Arrange
-        string hash = "hash4";
+        int hash = 4;
 
         // Act
         RepoDTO? repo = _repoRepository.Find(hash);
@@ -100,9 +100,9 @@ public class RepoRepositoryTests : IDisposable
         repos.Should().HaveCount(3);
         repos.Should().BeEquivalentTo(new List<RepoDTO>()
         {
-            new RepoDTO("hash1", "name1"),
-            new RepoDTO("hash2", "name2"),
-            new RepoDTO("hash3", "name3")
+            new RepoDTO(1, "name1"),
+            new RepoDTO(2, "name2"),
+            new RepoDTO(3, "name3")
         });
     }
 

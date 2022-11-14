@@ -2,28 +2,21 @@ namespace app;
 
 public class GitInsight
 {
-    private List<Commit> commits;
+    private List<CommitDTO> commits;
 
     public char Mode;
-    public GitInsight(String path, char mode)
+    public GitInsight(String path, char mode) : this(new List<CommitDTO>(), mode)
     {
+        var repoFromPath = new Repository(path);
         var connection = new Connection();
-        // commits = connection.fetchCommits(new Repository(path));
-
-        if (mode != 'a' && mode != 'f')
-        {
-            throw new ArgumentException("Invalid mode");
-        }
-        Mode = mode;
+        commits = connection.fetchCommits(repoFromPath);
+        commits.Sort((x, y) => DateTime.Compare(x.Date, y.Date));
     }
 
-    public GitInsight(IRepository repo, char mode)
+    public GitInsight(List<CommitDTO> _commits, char mode)
     {
-        commits = new List<Commit>();
-        foreach (var item in repo.Commits)
-        {
-            commits.Add(new Commit(item.GetHashCode(), item.Message, item.Author.When.DateTime));
-        }
+        commits = _commits;
+        commits.Sort((x, y) => DateTime.Compare(x.Date, y.Date));
 
         if (mode != 'a' && mode != 'f')
         {
@@ -97,7 +90,7 @@ public class GitInsight
         foreach (var commit in commits)
         {
             var date = commit.Date;
-            var author = commit.Author!.Name;
+            var author = commit.Author;
             if (commitsByAuthor.ContainsKey(author))
             {
                 var commitsByDate = commitsByAuthor[author];

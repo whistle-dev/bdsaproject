@@ -3,7 +3,7 @@ namespace GitInsight.Core
     public interface IRepoRepository
     {
         void Create(RepoCreateDTO repo);
-        RepoDTO? Find(string hash);
+        RepoDTO? Find(int hash);
         IReadOnlyCollection<RepoDTO> ReadAll();
     }
 }

@@ -12,75 +12,33 @@ public class CommitRepository : ICommitRepository
 
         var isRepoInDb = _context.Repos.Any(r => r.Hash == commit.RepoHash);
 
-        var isAuthorInDb = _context.Authors.Any(a => a.Hash == commit.AuthorHash);
-
         if (isCommitInDb)
         {
-            throw new ArgumentException("Commit already exists in database.");
+            return;
         }
         else if (!isRepoInDb)
         {
             throw new ArgumentException("Repo does not exist in database.");
         }
-        else if (!isAuthorInDb)
-        {
-            throw new ArgumentException("Author does not exist in database.");
-        }
         else
         {
-            var commitEntity = new Commit(commit.Hash, commit.Message, commit.Date) { AuthorHash = commit.AuthorHash, RepoHash = commit.RepoHash };
+            var commitEntity = new Commit(commit.Hash, commit.Message, commit.Date, commit.Author) { RepoHash = commit.RepoHash };
 
             _context.Commits.Add(commitEntity);
             _context.SaveChanges();
         }
     }
 
-    public CommitDTO? Find(string hash)
+    public CommitDTO? Find(int hash)
     {
         var commit = from c in _context.Commits
                      where c.Hash == hash
-                     select new CommitDTO(c.Hash, c.Message, c.Date, c.AuthorHash!, c.RepoHash!);
+                     select new CommitDTO(c.Hash, c.Message, c.Date, c.Author, c.RepoHash!);
 
         return commit.FirstOrDefault();
     }
 
-    public IReadOnlyCollection<string> ReadAllUniqueAuthorsInRepo(string repo)
-    {
-        var repoExists = _context.Repos.Any(r => r.Hash == repo);
-
-        if (!repoExists)
-        {
-            throw new ArgumentException("Repo does not exist in database.");
-        }
-        else
-        {
-            var authors = from c in _context.Commits
-                          where c.RepoHash == repo
-                          select c.AuthorHash;
-
-            return authors.Distinct().ToList();
-        }
-    }
-
-    public IReadOnlyCollection<DateTime> ReadAllUniqueDatesInRepo(string repo)
-    {
-        var repoExists = _context.Repos.Any(r => r.Hash == repo);
-
-        if (!repoExists)
-        {
-            throw new ArgumentException("Repo does not exist in database.");
-        }
-        else
-        {
-            var dates = from c in _context.Commits
-                        where c.RepoHash == repo
-                        select c.Date;
-
-            return dates.Distinct().ToList();
-        }
-    }
-
-    public IReadOnlyCollection<CommitDTO> ReadAllInRepo(string repo)
+    public IReadOnlyCollection<CommitDTO> ReadAllInRepo(int repo)
     {
         var repoExists = _context.Repos.Any(r => r.Hash == repo);
 
@@ -92,49 +50,7 @@ public class CommitRepository : ICommitRepository
         {
             var commits = from c in _context.Commits
                           where c.RepoHash == repo
-                          select new CommitDTO(c.Hash, c.Message, c.Date, c.AuthorHash!, c.RepoHash!);
-
-            return commits.ToList();
-        }
-    }
-
-    public IReadOnlyCollection<CommitDTO> ReadAllInRepoOnDate(string repo, DateTime date)
-    {
-        var repoExists = _context.Repos.Any(r => r.Hash == repo);
-
-        if (!repoExists)
-        {
-            throw new ArgumentException("Repo does not exist in database.");
-        }
-        else
-        {
-            var commits = from c in _context.Commits
-                        where c.RepoHash == repo && c.Date == date
-                        select new CommitDTO(c.Hash, c.Message, c.Date, c.AuthorHash!, c.RepoHash!);
-
-            return commits.ToList();
-        }
-    }
-
-    public IReadOnlyCollection<CommitDTO> ReadAllInRepoOnDateByAuthor(string repo, DateTime date, string author)
-    {
-        var repoExists = _context.Repos.Any(r => r.Hash == repo);
-
-        var authorExists = _context.Authors.Any(a => a.Hash == author);
-
-        if (!repoExists)
-        {
-            throw new ArgumentException("Repo does not exist in database.");
-        }
-        else if (!authorExists)
-        {
-            throw new ArgumentException("Author does not exist in database.");
-        }
-        else
-        {
-            var commits = from c in _context.Commits
-                        where c.RepoHash == repo && c.Date == date && c.AuthorHash == author
-                        select new CommitDTO(c.Hash, c.Message, c.Date, c.AuthorHash!, c.RepoHash!);
+                          select new CommitDTO(c.Hash, c.Message, c.Date, c.Author, c.RepoHash!);
 
             return commits.ToList();
         }

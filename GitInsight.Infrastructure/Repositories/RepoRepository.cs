@@ -23,7 +23,7 @@ public class RepoRepository : IRepoRepository
         }
     }
 
-    public RepoDTO? Find(string hash)
+    public RepoDTO? Find(int hash)
     {
         var repo = from r in _context.Repos
                    where r.Hash == hash

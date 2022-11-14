@@ -7,4 +7,4 @@ global using System.Text;
 global using GitInsight.Infrastructure;
 global using Microsoft.Extensions.Configuration;
 global using Microsoft.EntityFrameworkCore.Design;
-global using Commit = GitInsight.Infrastructure.Commit;
+global using GitInsight.Core;

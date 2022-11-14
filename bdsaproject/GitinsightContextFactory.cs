@@ -5,10 +5,10 @@ public class GitInsightContextFactory : IDesignTimeDbContextFactory<GitinsightCo
     public GitinsightContext CreateDbContext(string[] args)
     {
         var configuration = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
-        var ConnectionString = configuration.GetConnectionString("ConnectionString");
+        var connectionString = configuration.GetConnectionString("GitInsight");
 
         var optionsBuilder = new DbContextOptionsBuilder<GitinsightContext>();
-        optionsBuilder.UseSqlServer(ConnectionString);
+        optionsBuilder.UseSqlServer(connectionString);
 
         return new GitinsightContext(optionsBuilder.Options);
     }

@@ -2,63 +2,56 @@ namespace bdsaproject.Tests;
 
 public class GitInsightTests
 {
-    public Mock<IRepository> _Repository;
+    public List<CommitDTO> Commits;
 
     public GitInsightTests()
     {
-        // Initialize mock repository
-        _Repository = new MockRepository(MockBehavior.Default).Create<IRepository>();
+        Commits = new List<CommitDTO>();
 
-        // Setup DateTimeOffsets for authors
-        DateTimeOffset date1 = new DateTimeOffset(new DateTime(2022, 10, 28));
-        DateTimeOffset date2 = new DateTimeOffset(new DateTime(2022, 11, 1));
+        // Setup Dates
+        DateTime date1 = new DateTime(2022, 10, 28);
+        DateTime date2 = new DateTime(2022, 11, 1);
 
-        // Setup authors
-        Signature nillerDate1 = new Signature("niller", "niller@hotmail.dk", date1);
-        Signature nillerDate2 = new Signature("niller", "niller@hotmail.dk", date2);
-        Signature laugeDate1 = new Signature("lauge-dev", "laupbusiness@gmail.com", date1);
-        Signature laugeDate2 = new Signature("lauge-dev", "laupbusiness@gmail.com", date2);
+        // Setup fake hashes
+        var commitHashIncrement = 0;
+        var repoHash = 0;
 
-        // Setup list of commits
-        var commitlist = new List<Commit>();
-
-        // Commit different amount of times for each comitter
+        // Commit different amount of times for each comitter on each date
 
         // 2x for niller on date 2022-10-28
-        for (int i = 0; i < 2; i++) { commitlist.Add(SetupMockCommit(new Mock<Commit>(), nillerDate1, "Niller date 1 message " + i)); }
+        for (int i = 0; i < 2; i++)
+        {
+            Commits.Add(new CommitDTO(commitHashIncrement, "Niller date 1 message " + i, date1, "niller", repoHash));
+            commitHashIncrement++;
+        }
 
         // 3x for niller on date 2022-11-01
-        for (int i = 0; i < 3; i++) { commitlist.Add(SetupMockCommit(new Mock<Commit>(), nillerDate2, "Niller date 2 message " + i)); }
+        for (int i = 0; i < 3; i++)
+        {
+            Commits.Add(new CommitDTO(commitHashIncrement, "Niller date 2 message " + i, date2, "niller", repoHash));
+            commitHashIncrement++;
+        }
 
         // 4x for lauge-dev on date 2022-10-28
-        for (int i = 0; i < 4; i++) { commitlist.Add(SetupMockCommit(new Mock<Commit>(), laugeDate1, "Lauge date 1 message " + i)); }
+        for (int i = 0; i < 4; i++)
+        {
+            Commits.Add(new CommitDTO(commitHashIncrement, "Lauge date 1 message " + i, date1, "lauge-dev", repoHash));
+            commitHashIncrement++;
+        }
 
         // 5x for lauge-dev on date 2022-11-01
-        for (int i = 0; i < 5; i++) { commitlist.Add(SetupMockCommit(new Mock<Commit>(), laugeDate2, "Lauge date 2 message " + i)); }
-
-        // Setup mock commits
-        var commits = new Mock<IQueryableCommitLog>();
-
-        commits.Setup(c => c.GetEnumerator()).Returns(commitlist.GetEnumerator());
-
-        // Setup mock repository
-        _Repository.Setup(r => r.Commits).Returns(commits.Object);
-    }
-
-    // Method to avoid redundant code for setup of mock commits
-    public Commit SetupMockCommit(Mock<Commit> commit, Signature committer, string msg)
-    {
-        commit.SetupGet(c => c.Committer).Returns(committer);
-        commit.SetupGet(c => c.Author).Returns(committer);
-        commit.SetupGet(c => c.Message).Returns(msg);
-        return commit.Object;
+        for (int i = 0; i < 5; i++)
+        {
+            Commits.Add(new CommitDTO(commitHashIncrement, "Lauge date 2 message " + i, date2, "lauge-dev", repoHash));
+            commitHashIncrement++;
+        }
     }
 
     [Fact]
     public void GitInsight_Constructor_Should_Throw_No_Exceptions()
     {
         // Act
-        Action act = () => new GitInsight(_Repository.Object, 'f');
+        Action act = () => new app.GitInsight(Commits, 'f');
 
         // Assert
         act.Should().NotThrow();
@@ -68,7 +61,7 @@ public class GitInsightTests
     public void GitInsight_Constructor_Should_Throw_Exception()
     {
         // Act
-        Action act = () => new GitInsight("wrong/path", 'f');
+        Action act = () => new app.GitInsight("wrong/path", 'f');
 
         // Assert
         act.Should().Throw<Exception>();
@@ -80,7 +73,7 @@ public class GitInsightTests
     public void GitInsight_Constructor_Should_Throw_ArgumentException()
     {
         // Act
-        Action act = () => new GitInsight(_Repository.Object, 'x');
+        Action act = () => new app.GitInsight(Commits, 'x');
 
         // Assert
         act.Should().Throw<ArgumentException>();
@@ -90,7 +83,7 @@ public class GitInsightTests
     public void GetCommits_Frequency_Mode_Should_Return_Expected_Value()
     {
         // Arrange
-        GitInsight git = new GitInsight(_Repository.Object, 'f');
+        app.GitInsight git = new app.GitInsight(Commits, 'f');
 
         var expected = new Dictionary<DateTime, int> {
             { new DateTime(2022, 10, 28), 6 },
@@ -111,7 +104,7 @@ public class GitInsightTests
     public void GetCommits_Author_Mode_Should_Return_Expected_Value()
     {
         // Arrange
-        GitInsight git = new GitInsight(_Repository.Object, 'a');
+        app.GitInsight git = new app.GitInsight(Commits, 'a');
 
         var expected = new Dictionary<string, Dictionary<DateTime, int>> {
             { "niller", new Dictionary<DateTime, int> {
