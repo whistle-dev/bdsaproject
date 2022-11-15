@@ -1,6 +1,63 @@
+@using System.Globalization
 <div>
-  <h3>Commits Chart</h3>
-  <hr>
 
-  content...
+  <RadzenChart>
+      <RadzenColumnSeries Data="@commitsLaugepetersen" CategoryProperty="Date" Title="laugepetersen" LineType="LineType.Dashed" ValueProperty="Commits">
+          <RadzenSeriesDataLabels Visible="@showDataLabels" />
+      </RadzenColumnSeries>
+      <RadzenColumnSeries Data="@commits2ruis" CategoryProperty="Date" Title="2ruis" ValueProperty="Commits">
+          <RadzenSeriesDataLabels Visible="@showDataLabels" />
+      </RadzenColumnSeries>
+      <RadzenColumnOptions Radius="5" />
+      <RadzenValueAxis Min="0" step="1">
+          <RadzenGridLines Visible="true" />
+          <RadzenAxisTitle Text="Amount Commits" />
+      </RadzenValueAxis>
+  </RadzenChart>
 </div>
+
+@code {
+  bool showDataLabels = false;
+
+    class DataItem
+    {
+        public string Date { get; set; }
+        public double Commits { get; set; }
+    }
+
+    DataItem[] commitsLaugepetersen = new DataItem[] {
+        new DataItem
+        {
+            Date = "15/11/2022",
+            Commits = 1
+        },
+        new DataItem
+        {
+            Date = "16/11/2022",
+            Commits = 1
+        },
+        new DataItem
+        {
+            Date = "17/11/2022",
+            Commits = 3
+        },
+    };
+
+    DataItem[] commits2ruis = new DataItem[] {
+        new DataItem
+        {
+            Date = "15/11/2022",
+            Commits = 1
+        },
+        new DataItem
+        {
+            Date = "16/11/2022",
+            Commits = 2
+        },
+        new DataItem
+        {
+            Date = "17/11/2022",
+            Commits = 3
+        },
+    };
+}
