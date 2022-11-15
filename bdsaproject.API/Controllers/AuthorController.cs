@@ -4,6 +4,19 @@ namespace app.API;
 [Route("[controller]")]
 public class AuthorController : ControllerBase
 {
+    //Get all dates that contains commits with the author
+    [Route("{username}/{reponame}")]
+    [HttpGet]
+    public async Task<ActionResult<string>> Get(string username, string reponame)
+    {
+        string url = $"https://github.com/{username}/{reponame}";
+        var git = new GitInsight(url, 'a');
+        var commits = git.getDateWithAuthorCommits();
+        git.removeRepo();
+        return Ok(commits);
+    }
+
+    //Get specific authors with their commits for each day
     [Route("{username}/{reponame}/{author}")]
     [HttpGet]
     public async Task<ActionResult<string>> Get(string username, string reponame, string author)
@@ -14,4 +27,5 @@ public class AuthorController : ControllerBase
         git.removeRepo();
         return Ok(commits);
     }
+
 }

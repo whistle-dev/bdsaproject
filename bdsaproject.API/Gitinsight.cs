@@ -128,6 +128,34 @@ public class GitInsight
         return commitsByDate;
     }
 
+    public Dictionary<string, Dictionary<string, int>> getDateWithAuthorCommits()
+    {
+        var commitsByDate = new Dictionary<string, Dictionary<string, int>>();
+        foreach (var commit in commits)
+        {
+            var date = commit.Date.ToShortDateString();
+            var author = commit.Author;
+            if (commitsByDate.ContainsKey(date))
+            {
+                var commitsByAuthor = commitsByDate[date];
+                if (commitsByAuthor.ContainsKey(author))
+                {
+                    commitsByAuthor[author]++;
+                }
+                else
+                {
+                    commitsByAuthor[author] = 1;
+                }
+            }
+            else
+            {
+                commitsByDate[date] = new Dictionary<string, int> { { author, 1 } };
+            }
+        }
+        return commitsByDate;
+    }
+
+
     private Dictionary<string, Dictionary<DateTime, int>> getCommitsAuthor()
     {
         var commitsByAuthor = new Dictionary<string, Dictionary<DateTime, int>>();
