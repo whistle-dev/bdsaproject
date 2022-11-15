@@ -20,11 +20,8 @@ public class Program
                 {
                     GitInsight git = new GitInsight(o.Path, o.Mode);
                     git.printCommits();
-                    // GitInsight git = new GitInsight(o.Path, 'a'); // Only author mode implemented for db
-                    // connection.createDB();
-                    // connection.createTable();
-                    // connection.insertCommits(git.getCommits());
-                    //connection.selectCommits();
+                    git.removeRepo();
+
                 }
                 else
                 {

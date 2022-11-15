@@ -5,12 +5,24 @@ public class GitInsight
     private List<CommitDTO> commits;
 
     public char Mode;
-    public GitInsight(String path, char mode) : this(new List<CommitDTO>(), mode)
+
+    public GitInsight(String url, char mode) : this(new List<CommitDTO>(), mode)
     {
+        Console.WriteLine("Cloning repository ...");
+        string path = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\Downloads\\GitInsight";
+
+        if (Directory.Exists(path))
+        {
+            removeRepo();
+        }
+        Repository.Clone(url, path);
+        Console.WriteLine("Repository cloned.");
         var repoFromPath = new Repository(path);
+        
         var connection = new Connection();
         commits = connection.fetchCommits(repoFromPath);
         commits.Sort((x, y) => DateTime.Compare(x.Date, y.Date));
+
     }
 
     public GitInsight(List<CommitDTO> _commits, char mode)
@@ -23,6 +35,26 @@ public class GitInsight
             throw new ArgumentException("Invalid mode");
         }
         Mode = mode;
+    }
+
+    public void removeRepo()
+    {
+        try
+        {
+            string path = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\Downloads\\GitInsight";
+
+            var directory = new DirectoryInfo(path) { Attributes = FileAttributes.Normal };
+
+            foreach (var info in directory.GetFileSystemInfos("*", SearchOption.AllDirectories))
+            {
+                info.Attributes = FileAttributes.Normal;
+            }
+            Directory.Delete(path, true);
+        }
+        catch (System.Exception)
+        {
+
+        }
     }
 
     public void printCommits()
