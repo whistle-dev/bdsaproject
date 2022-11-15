@@ -2,37 +2,75 @@ namespace app;
 
 public class GitInsight
 {
-    private IRepository _repo;
+    private List<CommitDTO> commits;
 
     public char Mode;
 
-    public GitInsight(String path, char mode) : this(new Repository(@path), mode) {
-        printCommits();
+    public GitInsight(String url, char mode) : this(new List<CommitDTO>(), mode)
+    {
+        Console.WriteLine("Cloning repository ...");
+        string path = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\Downloads\\GitInsight";
+
+        if (Directory.Exists(path))
+        {
+            removeRepo();
+        }
+        Repository.Clone(url, path);
+        Console.WriteLine("Repository cloned.");
+        var repoFromPath = new Repository(path);
+
+        var connection = new Connection();
+        commits = connection.fetchCommits(repoFromPath);
+        commits.Sort((x, y) => DateTime.Compare(x.Date, y.Date));
+
+        repoFromPath.Dispose();
+
     }
 
-    public GitInsight(IRepository repo, char mode)
+    public GitInsight(List<CommitDTO> _commits, char mode)
     {
-        _repo = repo;
+        commits = _commits;
+        commits.Sort((x, y) => DateTime.Compare(x.Date, y.Date));
 
         if (mode != 'a' && mode != 'f')
         {
             throw new ArgumentException("Invalid mode");
         }
-        Mode = mode;        
+        Mode = mode;
+    }
+
+    public void removeRepo()
+    {
+        try
+        {
+            string path = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\Downloads\\GitInsight";
+
+            var directory = new DirectoryInfo(path) { Attributes = FileAttributes.Normal };
+
+            foreach (var info in directory.GetFileSystemInfos("*", SearchOption.AllDirectories))
+            {
+                info.Attributes = FileAttributes.Normal;
+            }
+            Directory.Delete(path, true);
+        }
+        catch (System.Exception)
+        {
+
+        }
     }
 
     public void printCommits()
     {
         if (Mode == 'f')
         {
-            foreach (var commit in getCommits())
+            foreach (var commit in getCommitsFrequency())
             {
                 Console.WriteLine(commit.Value + " " + commit.Key.ToString("dd/MM/yyyy"));
             }
         }
         else if (Mode == 'a')
         {
-            foreach (var author in getCommits())
+            foreach (var author in getCommitsAuthor())
             {
                 Console.WriteLine(author.Key);
                 foreach (var commit in author.Value)
@@ -44,6 +82,16 @@ public class GitInsight
 
         }
     }
+
+    public Dictionary<DateTime, int> getCommitsFromAuthor(string author)
+    {
+
+        var commits = getCommitsAuthor()[author];
+        return commits;
+
+    }
+
+
 
     public dynamic getCommits()
     {
@@ -57,17 +105,16 @@ public class GitInsight
         }
         else
         {
-            return null;
+            throw new ArgumentException("Invalid mode");
         }
     }
 
     private Dictionary<DateTime, int> getCommitsFrequency()
     {
-        var commits = _repo.Commits;
         var commitsByDate = new Dictionary<DateTime, int>();
         foreach (var commit in commits)
         {
-            var date = commit.Committer.When.Date;
+            var date = commit.Date;
             if (commitsByDate.ContainsKey(date))
             {
                 commitsByDate[date]++;
@@ -83,12 +130,11 @@ public class GitInsight
 
     private Dictionary<string, Dictionary<DateTime, int>> getCommitsAuthor()
     {
-        var commits = _repo.Commits;
         var commitsByAuthor = new Dictionary<string, Dictionary<DateTime, int>>();
         foreach (var commit in commits)
         {
-            var date = commit.Committer.When.Date;
-            var author = commit.Author.Name;
+            var date = commit.Date;
+            var author = commit.Author;
             if (commitsByAuthor.ContainsKey(author))
             {
                 var commitsByDate = commitsByAuthor[author];
