@@ -19,10 +19,15 @@ public class Connection
     public List<CommitDTO> fetchCommits(IRepository repo)
     {
         var repoHash = repo.GetHashCode();
-        if (_repoRepository.Find(repoHash) == null || _commitRepository.ReadAllInRepo(repoHash).Count() < repo.Commits.Count())
+
+        if (_repoRepository.Find(repoHash) == null)
+        {
+            _repoRepository.Create(new RepoCreateDTO(repoHash, repo.Info.WorkingDirectory));
+        }
+
+        if (_commitRepository.ReadAllInRepo(repoHash).Count() < repo.Commits.Count())
         {
             Console.WriteLine("Adding commits to database");
-            _repoRepository.Create(new RepoCreateDTO(repoHash, repo.Info.WorkingDirectory));
             foreach (var commit in repo.Commits)
             {
                 _commitRepository.Create(new CommitCreateDTO(commit.GetHashCode(),
