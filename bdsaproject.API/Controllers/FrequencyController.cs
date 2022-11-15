@@ -8,7 +8,7 @@ public class FrequencyController : ControllerBase
     //Get all commits from a repository
     [Route("{username}/{reponame}")]
     [HttpGet]
-    public async Task<ActionResult<string>> Get(string username, string reponame)
+    public ActionResult<string> Get(string username, string reponame)
     {
         string url = $"https://github.com/{username}/{reponame}";
         var git = new GitInsight(url, 'f');
