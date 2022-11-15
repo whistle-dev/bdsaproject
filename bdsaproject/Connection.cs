@@ -21,6 +21,7 @@ public class Connection
         var repoHash = repo.GetHashCode();
         if (_repoRepository.Find(repoHash) == null || _commitRepository.ReadAllInRepo(repoHash).Count() < repo.Commits.Count())
         {
+            Console.WriteLine("Adding commits to database");
             _repoRepository.Create(new RepoCreateDTO(repoHash, repo.Info.WorkingDirectory));
             foreach (var commit in repo.Commits)
             {
