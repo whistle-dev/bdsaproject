@@ -1,0 +1,39 @@
+﻿@page "/"
+
+<PageTitle>Index</PageTitle>
+
+<h1>GitInsights™</h1>
+<p>Welcome to the insights!</p>
+<hr>
+
+<form action="">
+
+  <input type="text" placeholder="Github Username" @bind="@username" @oninput="@(ui => {username = (string) ui.Value;})" />
+  <input type="text" placeholder="Github Repository" @bind="@repository" @oninput="@(ui => {repository = (string) ui.Value;})" />
+      
+  <select @onchange="@(ui => {mode = (string) ui.Value;})" name="" id="">
+    <option value="author">Author Mode</option>
+    <option value="frequency">Frequency Mode</option>
+  </select>
+       
+  @if(mode == "author") {
+    <input type="text" placeholder="Author Username" @bind="@authorUsername" @oninput="@(ui => {authorUsername = (string) ui.Value;})" />
+  }
+     
+  <a @onclick="RunProgram" class="btn btn-success">Run!</a>
+  
+</form>
+
+<p class="alert alert-secondary">Confirm <strong>@username/@repository</strong> with mode <strong>@mode</strong></p>
+
+<ColumnChart></ColumnChart>
+
+@code {
+  private string username;
+  private string repository;
+  private string mode = "author";
+  private string authorUsername;
+  private void RunProgram() {
+
+  }
+}
