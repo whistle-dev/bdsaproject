@@ -8,7 +8,7 @@ public class RepoRepository : IRepoRepository
 
     public void Create(RepoCreateDTO repo)
     {
-        var isRepoInDb = _context.Repos.Any(r => r.Hash == repo.Hash);
+        var isRepoInDb = _context.Repos.Any(r => r.Path == repo.Path);
 
         if (isRepoInDb)
         {
@@ -16,26 +16,44 @@ public class RepoRepository : IRepoRepository
         }
         else
         {
-            var repoEntity = new Repo(repo.Hash, repo.Name);
+            var repoEntity = new Repo(repo.Path) { LatestCommitSha = repo.LatestCommitSha };
 
             _context.Repos.Add(repoEntity);
             _context.SaveChanges();
         }
     }
 
-    public RepoDTO? Find(int hash)
+    public RepoDTO? Find(string path)
     {
         var repo = from r in _context.Repos
-                   where r.Hash == hash
-                   select new RepoDTO(r.Hash, r.Name);
+                   where r.Path == path
+                   select new RepoDTO(r.Path, r.LatestCommitSha);
 
         return repo.FirstOrDefault();
+    }
+
+    public void Update(RepoUpdateDTO repo)
+    {
+        var isRepoInDb = _context.Repos.Any(r => r.Path == repo.Path);
+
+        if (!isRepoInDb)
+        {
+            throw new ArgumentException("Repo does not exist in database.");
+        }
+        else
+        {
+            var repoEntity = _context.Repos.First(r => r.Path == repo.Path);
+
+            repoEntity.LatestCommitSha = repo.LatestCommitSha;
+
+            _context.SaveChanges();
+        }
     }
 
     public IReadOnlyCollection<RepoDTO> ReadAll()
     {
         var repos = from r in _context.Repos
-                    select new RepoDTO(r.Hash, r.Name);
+                    select new RepoDTO(r.Path, r.LatestCommitSha);
 
         return repos.ToList();
     }

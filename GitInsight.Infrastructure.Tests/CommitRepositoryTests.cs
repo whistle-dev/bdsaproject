@@ -21,21 +21,21 @@ public class CommitRepositoryTests : IDisposable
 
         // Seed the database with test data.
 
-        Repo repo1 = new Repo(1, "name1");
-        Repo repo2 = new Repo(2, "name2");
-        Repo repo3 = new Repo(3, "name3");
+        Repo repo1 = new Repo("path1") { LatestCommitSha = "sha8" };
+        Repo repo2 = new Repo("path2") { LatestCommitSha = "sha9" };
+        Repo repo3 = new Repo("path3");
 
         context.Repos.AddRange(repo1, repo2, repo3);
 
-        Commit commit1 = new Commit(1, "message1", new DateTime(2022, 10, 28), "name1") { RepoHash = 1, Repo = repo1 };
-        Commit commit2 = new Commit(2, "message2", new DateTime(2022, 10, 28), "name2") { RepoHash = 1, Repo = repo1 };
-        Commit commit3 = new Commit(3, "message3", new DateTime(2022, 10, 28), "name2") { RepoHash = 1, Repo = repo1 };
-        Commit commit4 = new Commit(4, "message4", new DateTime(2022, 10, 28), "name3") { RepoHash = 1, Repo = repo1 };
-        Commit commit5 = new Commit(5, "message5", new DateTime(2022, 10, 28), "name3") { RepoHash = 2, Repo = repo2 };
-        Commit commit6 = new Commit(6, "message6", new DateTime(2022, 10, 28), "name4") { RepoHash = 2, Repo = repo2 };
-        Commit commit7 = new Commit(7, "message7", new DateTime(2022, 10, 28), "name4") { RepoHash = 2, Repo = repo2 };
-        Commit commit8 = new Commit(8, "message8", new DateTime(2022, 11, 1), "name2") { RepoHash = 1, Repo = repo1 };
-        Commit commit9 = new Commit(9, "message9", new DateTime(2022, 11, 2), "name3") { RepoHash = 2, Repo = repo2 };
+        Commit commit1 = new Commit("sha1", "message1", new DateTime(2022, 10, 28), "name1", "path1") { Repo = repo1 };
+        Commit commit2 = new Commit("sha2", "message2", new DateTime(2022, 10, 28), "name2", "path1") { Repo = repo1 };
+        Commit commit3 = new Commit("sha3", "message3", new DateTime(2022, 10, 28), "name2", "path1") { Repo = repo1 };
+        Commit commit4 = new Commit("sha4", "message4", new DateTime(2022, 10, 28), "name3", "path1") { Repo = repo1 };
+        Commit commit5 = new Commit("sha5", "message5", new DateTime(2022, 10, 28), "name3", "path2") { Repo = repo2 };
+        Commit commit6 = new Commit("sha6", "message6", new DateTime(2022, 10, 28), "name4", "path2") { Repo = repo2 };
+        Commit commit7 = new Commit("sha7", "message7", new DateTime(2022, 10, 28), "name4", "path2") { Repo = repo2 };
+        Commit commit8 = new Commit("sha8", "message8", new DateTime(2022, 11, 1), "name2", "path1") { Repo = repo1 };
+        Commit commit9 = new Commit("sha9", "message9", new DateTime(2022, 11, 2), "name3", "path2") { Repo = repo2 };
 
         context.Commits.AddRange(commit1, commit2, commit3, commit4, commit5, commit6, commit7, commit8, commit9);
 
@@ -49,7 +49,7 @@ public class CommitRepositoryTests : IDisposable
     public void Create_Should_Create_Commit()
     {
         // Arrange
-        CommitCreateDTO commit = new CommitCreateDTO(10, "message10", new DateTime(2022, 11, 1), "name1", 1);
+        CommitCreateDTO commit = new CommitCreateDTO("sha10", "message10", new DateTime(2022, 11, 1), "name1", "path1");
 
         // Act
         _commitRepository.Create(commit);
@@ -62,7 +62,7 @@ public class CommitRepositoryTests : IDisposable
     public void Create_Should_Not_Create_Duplicate_Commit()
     {
         // Arrange
-        CommitCreateDTO commit = new CommitCreateDTO(1, "message1", new DateTime(2022, 10, 28), "name1", 1);
+        CommitCreateDTO commit = new CommitCreateDTO("sha1", "message1", new DateTime(2022, 10, 28), "name1", "path1");
 
         // Act
         _commitRepository.Create(commit);
@@ -75,7 +75,7 @@ public class CommitRepositoryTests : IDisposable
     public void Create_Should_Throw_ArgumentException_With_Missing_Repo_Message()
     {
         // Arrange
-        CommitCreateDTO commit = new CommitCreateDTO(10, "message10", new DateTime(2022, 11, 1), "name1", 10);
+        CommitCreateDTO commit = new CommitCreateDTO("sha10", "message10", new DateTime(2022, 11, 1), "name1", "path10");
 
         // Act
         Action action = () => _commitRepository.Create(commit);
@@ -88,24 +88,24 @@ public class CommitRepositoryTests : IDisposable
     public void Find_Should_Return_Commit()
     {
         // Arrange
-        int hash = 1;
+        string sha = "sha1";
 
         // Act
-        CommitDTO? commit = _commitRepository.Find(hash);
+        CommitDTO? commit = _commitRepository.Find(sha);
 
         // Assert
         commit.Should().NotBeNull();
-        commit.Should().BeEquivalentTo(new CommitDTO(1, "message1", new DateTime(2022, 10, 28), "name1", 1));
+        commit.Should().BeEquivalentTo(new CommitDTO("sha1", "message1", new DateTime(2022, 10, 28), "name1", "path1"));
     }
 
     [Fact]
     public void Find_Should_Return_Null()
     {
         // Arrange
-        int hash = 10;
+        string sha = "sha10";
 
         // Act
-        CommitDTO? commit = _commitRepository.Find(hash);
+        CommitDTO? commit = _commitRepository.Find(sha);
 
         // Assert
         commit.Should().BeNull();
@@ -115,7 +115,7 @@ public class CommitRepositoryTests : IDisposable
     public void ReadAllInRepo_Should_Return_All_Commits_In_Repo()
     {
         // Arrange
-        int repo = 1;
+        string repo = "path1";
 
         // Act
         IReadOnlyCollection<CommitDTO> commits = _commitRepository.ReadAllInRepo(repo);
@@ -125,11 +125,11 @@ public class CommitRepositoryTests : IDisposable
         commits.Count.Should().Be(5);
         commits.Should().BeEquivalentTo(new List<CommitDTO>()
         {
-            new CommitDTO(1, "message1", new DateTime(2022, 10, 28), "name1", 1),
-            new CommitDTO(2, "message2", new DateTime(2022, 10, 28), "name2", 1),
-            new CommitDTO(3, "message3", new DateTime(2022, 10, 28), "name2", 1),
-            new CommitDTO(4, "message4", new DateTime(2022, 10, 28), "name3", 1),
-            new CommitDTO(8, "message8", new DateTime(2022, 11, 1), "name2", 1),
+            new CommitDTO("sha1", "message1", new DateTime(2022, 10, 28), "name1", "path1"),
+            new CommitDTO("sha2", "message2", new DateTime(2022, 10, 28), "name2", "path1"),
+            new CommitDTO("sha3", "message3", new DateTime(2022, 10, 28), "name2", "path1"),
+            new CommitDTO("sha4", "message4", new DateTime(2022, 10, 28), "name3", "path1"),
+            new CommitDTO("sha8", "message8", new DateTime(2022, 11, 1), "name2", "path1"),
         });
     }
 
@@ -137,7 +137,7 @@ public class CommitRepositoryTests : IDisposable
     public void ReadAllInRepo_Should_Return_Empty_List()
     {
         // Arrange
-        int repo = 3;
+        string repo = "path3";
 
         // Act
         IReadOnlyCollection<CommitDTO> commits = _commitRepository.ReadAllInRepo(repo);
@@ -151,7 +151,7 @@ public class CommitRepositoryTests : IDisposable
     public void ReadAllInRepo_Should_Throw_ArgumentException()
     {
         // Arrange
-        int repo = 4;
+        string repo = "path4";
 
         // Act
         Action action = () => _commitRepository.ReadAllInRepo(repo);

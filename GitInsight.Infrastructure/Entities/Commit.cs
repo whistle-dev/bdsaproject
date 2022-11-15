@@ -2,18 +2,19 @@ namespace GitInsight.Infrastructure;
 
 public class Commit
 {
-    public int Hash { get; set; }
+    public string Sha { get; set; }
     public string Message { get; set; }
     public DateTime Date { get; set; }
     public string Author { get; set; }
-    public int RepoHash { get; set; }
+    public string RepoPath { get; set; }
     public virtual Repo? Repo { get; set; }
 
-    public Commit(int hash, string message, DateTime date, string author)
+    public Commit(string sha, string message, DateTime date, string author, string repoPath)
     {
-        Hash = hash;
+        Sha = sha;
         Message = message;
         Date = date;
         Author = author;
+        RepoPath = repoPath;
     }
 }
