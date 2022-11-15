@@ -58,18 +58,6 @@ public class GitInsightTests
     }
 
     [Fact]
-    public void GitInsight_Constructor_Should_Throw_Exception()
-    {
-        // Act
-        Action act = () => new app.GitInsight("wrong/path", 'f');
-
-        // Assert
-        act.Should().Throw<Exception>();
-        // In client it throws a RepositoryNotFoundException,
-        // while on github Actions it throws a System.TypeInitializationException.
-    }
-
-    [Fact]
     public void GitInsight_Constructor_Should_Throw_ArgumentException()
     {
         // Act

@@ -3,13 +3,17 @@ namespace app;
 public class GitInsight
 {
     private List<CommitDTO> commits;
-
+    private string path;
     public char Mode;
 
     public GitInsight(String url, char mode) : this(new List<CommitDTO>(), mode)
     {
+        string[] urlSplitted = url.Split("/");
+        string repoAuthor = urlSplitted[urlSplitted.Length - 2];
+        string repoName = urlSplitted[urlSplitted.Length - 1];
+        
         Console.WriteLine("Cloning repository ...");
-        string path = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\Downloads\\GitInsight";
+        path = Path.Combine(Path.GetTempPath(), repoAuthor, repoName);
 
         if (Directory.Exists(path))
         {
@@ -37,13 +41,14 @@ public class GitInsight
             throw new ArgumentException("Invalid mode");
         }
         Mode = mode;
+        path = "";
     }
 
     public void removeRepo()
     {
         try
         {
-            string path = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\Downloads\\GitInsight";
+            // string path = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\Downloads\\GitInsight";
 
             var directory = new DirectoryInfo(path) { Attributes = FileAttributes.Normal };
 
