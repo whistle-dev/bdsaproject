@@ -8,9 +8,9 @@ public class CommitRepository : ICommitRepository
 
     public void Create(CommitCreateDTO commit)
     {
-        var isCommitInDb = _context.Commits.Any(c => c.Hash == commit.Hash);
+        var isCommitInDb = _context.Commits.Any(c => c.Sha == commit.Sha);
 
-        var isRepoInDb = _context.Repos.Any(r => r.Hash == commit.RepoHash);
+        var isRepoInDb = _context.Repos.Any(r => r.Path == commit.RepoPath);
 
         if (isCommitInDb)
         {
@@ -22,25 +22,35 @@ public class CommitRepository : ICommitRepository
         }
         else
         {
-            var commitEntity = new Commit(commit.Hash, commit.Message, commit.Date, commit.Author) { RepoHash = commit.RepoHash };
+            var commitEntity = new Commit(commit.Sha, commit.Message, commit.Date, commit.Author, commit.RepoPath);
 
             _context.Commits.Add(commitEntity);
             _context.SaveChanges();
         }
     }
 
-    public CommitDTO? Find(int hash)
+    public CommitDTO? Find(string sha)
     {
         var commit = from c in _context.Commits
-                     where c.Hash == hash
-                     select new CommitDTO(c.Hash, c.Message, c.Date, c.Author, c.RepoHash!);
+                     where c.Sha == sha
+                     select new CommitDTO(c.Sha, c.Message, c.Date, c.Author, c.RepoPath);
 
         return commit.FirstOrDefault();
     }
 
-    public IReadOnlyCollection<CommitDTO> ReadAllInRepo(int repo)
+    public CommitDTO? FindLatestInRepo(string repoPath)
     {
-        var repoExists = _context.Repos.Any(r => r.Hash == repo);
+        var commit = from c in _context.Commits
+                     where c.RepoPath == repoPath
+                     orderby c.Date descending
+                     select new CommitDTO(c.Sha, c.Message, c.Date, c.Author, c.RepoPath);
+
+        return commit.FirstOrDefault();
+    }
+
+    public IReadOnlyCollection<CommitDTO> ReadAllInRepo(string repoPath)
+    {
+        var repoExists = _context.Repos.Any(r => r.Path == repoPath);
 
         if (!repoExists)
         {
@@ -49,8 +59,8 @@ public class CommitRepository : ICommitRepository
         else
         {
             var commits = from c in _context.Commits
-                          where c.RepoHash == repo
-                          select new CommitDTO(c.Hash, c.Message, c.Date, c.Author, c.RepoHash!);
+                          where c.RepoPath == repoPath
+                          select new CommitDTO(c.Sha, c.Message, c.Date, c.Author, c.RepoPath);
 
             return commits.ToList();
         }
