@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\bdsaproject\bdsaproject.csproj" />
+    <ProjectReference Include="..\bdsaproject.API\bdsaproject.API.csproj" />
   </ItemGroup>
 
 </Project>
