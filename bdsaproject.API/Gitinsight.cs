@@ -18,10 +18,12 @@ public class GitInsight
         Repository.Clone(url, path);
         Console.WriteLine("Repository cloned.");
         var repoFromPath = new Repository(path);
-        
+
         var connection = new Connection();
         commits = connection.fetchCommits(repoFromPath);
         commits.Sort((x, y) => DateTime.Compare(x.Date, y.Date));
+
+        repoFromPath.Dispose();
 
     }
 
@@ -80,6 +82,16 @@ public class GitInsight
 
         }
     }
+
+    public Dictionary<DateTime, int> getCommitsFromAuthor(string author)
+    {
+
+        var commits = getCommitsAuthor()[author];
+        return commits;
+
+    }
+
+
 
     public dynamic getCommits()
     {
