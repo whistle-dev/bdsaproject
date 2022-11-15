@@ -6,34 +6,55 @@
 <p>Welcome to the insights!</p>
 <hr>
 
-<form action="">
 
-  <input type="text" placeholder="Github Username" @bind="@username" @oninput="@(ui => {username = (string) ui.Value;})" />
-  <input type="text" placeholder="Github Repository" @bind="@repository" @oninput="@(ui => {repository = (string) ui.Value;})" />
-      
-  <select @onchange="@(ui => {mode = (string) ui.Value;})" name="" id="">
-    <option value="author">Author Mode</option>
-    <option value="frequency">Frequency Mode</option>
-  </select>
+<div class="row">
+  <div class="col-3">
+    <RadzenTextBox Placeholder="Username" Class="w-100" @oninput="@(args => SetUsername(args.Value.ToString()))" />
+  </div>
+  <div class="col-3">
+    <RadzenTextBox Placeholder="Repository" Class="w-100" @oninput="@(args => SetRepository(args.Value.ToString()))" />
+  </div>
+  <div class="col-3">
+    <RadzenSelectBar @bind-Value=@mode TValue="string" Change=@(args => OnChange(args, "SelectBar with single selection"))>
+        <Items>
+            <RadzenSelectBarItem Text="Author" Value="authorValue" />
+            <RadzenSelectBarItem Text="Frequency" Value="frequencyValue" />
+        </Items>
+    </RadzenSelectBar>
+  </div>
+  <div class="col-3">
+    <RadzenButton Click=@RunProgram Text="Run!" ButtonStyle="ButtonStyle.Secondary"></RadzenButton> 
+  </div>
+</div>
        
-  @if(mode == "author") {
+  @* @if(mode == "author") {
     <input type="text" placeholder="Author Username" @bind="@authorUsername" @oninput="@(ui => {authorUsername = (string) ui.Value;})" />
-  }
-     
-  <a @onclick="RunProgram" class="btn btn-success">Run!</a>
-  
-</form>
+  } *@
 
-<p class="alert alert-secondary">Confirm <strong>@username/@repository</strong> with mode <strong>@mode</strong></p>
+<p class="alert alert-info">Confirm <strong>@username/@repository</strong> with mode <strong>@mode</strong>.</p>
 
 <ColumnChart></ColumnChart>
 
 @code {
-  private string username;
+  string username;
   private string repository;
   private string mode = "author";
+  string authorValue = "author";
+  string frequencyValue = "frequency";
   private string authorUsername;
-  private void RunProgram() {
 
+  void OnChange(object value, string name)
+  {
+    var str = value is IEnumerable<int> ? string.Join(", ", (IEnumerable<int>)value) : value;
+  }
+
+  void SetUsername(string value) {
+    username = value;
+  }
+  void SetRepository(string value) {
+    repository = value;
+  }
+  private void RunProgram() {
+    Console.WriteLine("Run Gitinsights!");
   }
 }
