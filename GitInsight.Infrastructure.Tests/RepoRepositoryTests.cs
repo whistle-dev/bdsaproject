@@ -2,7 +2,7 @@ namespace GitInsight.Infrastructure.Tests;
 
 public class RepoRepositoryTests : IDisposable
 {
-    private readonly GitinsightContext _context;
+    private readonly GitInsightContext _context;
     private readonly RepoRepository _repoRepository;
 
     public RepoRepositoryTests()
@@ -12,11 +12,11 @@ public class RepoRepositoryTests : IDisposable
         connection.Open();
 
         // Create the options for DbContext instance.
-        var builder = new DbContextOptionsBuilder<GitinsightContext>()
+        var builder = new DbContextOptionsBuilder<GitInsightContext>()
             .UseSqlite(connection);
 
         // Create the instance of DbContext.
-        var context = new GitinsightContext(builder.Options);
+        var context = new GitInsightContext(builder.Options);
         context.Database.EnsureCreated();
 
         // Seed the database with test data.

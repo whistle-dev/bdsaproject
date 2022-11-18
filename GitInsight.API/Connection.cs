@@ -1,8 +1,8 @@
-namespace app;
+namespace GitInsight.API;
 
 public class Connection
 {
-    private readonly GitinsightContext _context;
+    private readonly GitInsightContext _context;
     private readonly CommitRepository _commitRepository;
     private readonly RepoRepository _repoRepository;
 
