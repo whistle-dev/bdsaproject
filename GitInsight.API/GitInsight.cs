@@ -1,4 +1,4 @@
-namespace app;
+namespace GitInsight.API;
 
 public class GitInsight
 {

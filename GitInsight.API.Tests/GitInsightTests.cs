@@ -1,4 +1,4 @@
-namespace bdsaproject.Tests;
+namespace GitInsight.API.Tests;
 
 public class GitInsightTests
 {
@@ -51,7 +51,7 @@ public class GitInsightTests
     public void GitInsight_Constructor_Should_Throw_No_Exceptions()
     {
         // Act
-        Action act = () => new app.GitInsight(Commits, 'f');
+        Action act = () => new GitInsight(Commits, 'f');
 
         // Assert
         act.Should().NotThrow();
@@ -61,7 +61,7 @@ public class GitInsightTests
     public void GitInsight_Constructor_Should_Throw_ArgumentException()
     {
         // Act
-        Action act = () => new app.GitInsight(Commits, 'x');
+        Action act = () => new GitInsight(Commits, 'x');
 
         // Assert
         act.Should().Throw<ArgumentException>();
@@ -71,7 +71,7 @@ public class GitInsightTests
     public void GetCommits_Frequency_Mode_Should_Return_Expected_Value()
     {
         // Arrange
-        app.GitInsight git = new app.GitInsight(Commits, 'f');
+        GitInsight git = new GitInsight(Commits, 'f');
 
         var expected = new Dictionary<DateTime, int> {
             { new DateTime(2022, 10, 28), 6 },
@@ -92,7 +92,7 @@ public class GitInsightTests
     public void GetCommits_Author_Mode_Should_Return_Expected_Value()
     {
         // Arrange
-        app.GitInsight git = new app.GitInsight(Commits, 'a');
+        GitInsight git = new GitInsight(Commits, 'a');
 
         var expected = new Dictionary<string, Dictionary<DateTime, int>> {
             { "niller", new Dictionary<DateTime, int> {

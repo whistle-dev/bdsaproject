@@ -1,4 +1,4 @@
-namespace app.API;
+namespace GitInsight.API;
 
 [ApiController]
 [Route("[controller]")]

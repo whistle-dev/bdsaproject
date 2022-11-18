@@ -1,8 +1,8 @@
 namespace GitInsight.Infrastructure
 {
-    public class GitinsightContext : DbContext
+    public class GitInsightContext : DbContext
     {
-        public GitinsightContext(DbContextOptions<GitinsightContext> options) : base(options)
+        public GitInsightContext(DbContextOptions<GitInsightContext> options) : base(options)
         {
         }
 
