@@ -9,3 +9,5 @@ global using Microsoft.EntityFrameworkCore;
 global using Microsoft.Extensions.DependencyInjection;
 global using GitInsight.Infrastructure;
 global using Microsoft.Extensions.Configuration;
+global using System.Net.Http.Json;
+global using System.Text.RegularExpressions;
