@@ -2,9 +2,9 @@ namespace GitInsight.Infrastructure;
 
 public class CommitRepository : ICommitRepository
 {
-    private readonly GitinsightContext _context;
+    private readonly GitInsightContext _context;
 
-    public CommitRepository(GitinsightContext context) => _context = context;
+    public CommitRepository(GitInsightContext context) => _context = context;
 
     public void Create(CommitCreateDTO commit)
     {

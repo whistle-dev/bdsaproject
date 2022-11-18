@@ -2,9 +2,9 @@ namespace GitInsight.Infrastructure;
 
 public class RepoRepository : IRepoRepository
 {
-    private readonly GitinsightContext _context;
+    private readonly GitInsightContext _context;
 
-    public RepoRepository(GitinsightContext context) => _context = context;
+    public RepoRepository(GitInsightContext context) => _context = context;
 
     public void Create(RepoCreateDTO repo)
     {

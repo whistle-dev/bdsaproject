@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\bdsaproject.API\bdsaproject.API.csproj" />
+    <ProjectReference Include="..\GitInsight.API\GitInsight.API.csproj" />
     <ProjectReference Include="..\GitInsight.Core\GitInsight.Core.csproj" />
 
   </ItemGroup>
