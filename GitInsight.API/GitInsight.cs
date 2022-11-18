@@ -11,7 +11,7 @@ public class GitInsight
         string[] urlSplitted = url.Split("/");
         string repoAuthor = urlSplitted[urlSplitted.Length - 2];
         string repoName = urlSplitted[urlSplitted.Length - 1];
-        
+
         Console.WriteLine("Cloning repository ...");
         path = Path.Combine(Path.GetTempPath(), repoAuthor, repoName);
 
@@ -64,31 +64,7 @@ public class GitInsight
         }
     }
 
-    public void printCommits()
-    {
-        if (Mode == 'f')
-        {
-            foreach (var commit in getCommitsFrequency())
-            {
-                Console.WriteLine(commit.Value + " " + commit.Key.ToString("dd/MM/yyyy"));
-            }
-        }
-        else if (Mode == 'a')
-        {
-            foreach (var author in getCommitsAuthor())
-            {
-                Console.WriteLine(author.Key);
-                foreach (var commit in author.Value)
-                {
-                    Console.WriteLine("".PadLeft(5) + commit.Value + " " + commit.Key.ToString("dd/MM/yyyy"));
-                }
-                Console.WriteLine();
-            }
-
-        }
-    }
-
-    public Dictionary<DateTime, int> getCommitsFromAuthor(string author)
+    public Dictionary<string, int> getCommitsFromAuthor(string author)
     {
 
         var commits = getCommitsAuthor()[author];
@@ -114,12 +90,12 @@ public class GitInsight
         }
     }
 
-    private Dictionary<DateTime, int> getCommitsFrequency()
+    private Dictionary<string, int> getCommitsFrequency()
     {
-        var commitsByDate = new Dictionary<DateTime, int>();
+        var commitsByDate = new Dictionary<string, int>();
         foreach (var commit in commits)
         {
-            var date = commit.Date;
+            var date = commit.Date.ToShortDateString();
             if (commitsByDate.ContainsKey(date))
             {
                 commitsByDate[date]++;
@@ -161,12 +137,12 @@ public class GitInsight
     }
 
 
-    private Dictionary<string, Dictionary<DateTime, int>> getCommitsAuthor()
+    private Dictionary<string, Dictionary<string, int>> getCommitsAuthor()
     {
-        var commitsByAuthor = new Dictionary<string, Dictionary<DateTime, int>>();
+        var commitsByAuthor = new Dictionary<string, Dictionary<string, int>>();
         foreach (var commit in commits)
         {
-            var date = commit.Date;
+            var date = commit.Date.ToShortDateString();
             var author = commit.Author;
             if (commitsByAuthor.ContainsKey(author))
             {
@@ -182,7 +158,7 @@ public class GitInsight
             }
             else
             {
-                commitsByAuthor[author] = new Dictionary<DateTime, int> { { date, 1 } };
+                commitsByAuthor[author] = new Dictionary<string, int> { { date, 1 } };
             }
         }
 

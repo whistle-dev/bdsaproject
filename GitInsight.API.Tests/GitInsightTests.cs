@@ -73,18 +73,18 @@ public class GitInsightTests
         // Arrange
         GitInsight git = new GitInsight(Commits, 'f');
 
-        var expected = new Dictionary<DateTime, int> {
-            { new DateTime(2022, 10, 28), 6 },
-            { new DateTime(2022, 11, 1), 8 }
+        var expected = new Dictionary<string, int> {
+            { new DateTime(2022, 10, 28).ToShortDateString(), 6 },
+            { new DateTime(2022, 11, 1).ToShortDateString(), 8 }
         };
 
         // Act
         var actual = git.getCommits();
 
         // Assert
-        (actual is Dictionary<DateTime, int>).Should().BeTrue();
+        (actual is Dictionary<string, int>).Should().BeTrue();
 
-        var actualDict = (Dictionary<DateTime, int>)actual;
+        var actualDict = (Dictionary<string, int>)actual;
         actualDict.Should().BeEquivalentTo(expected);
     }
 
@@ -94,14 +94,14 @@ public class GitInsightTests
         // Arrange
         GitInsight git = new GitInsight(Commits, 'a');
 
-        var expected = new Dictionary<string, Dictionary<DateTime, int>> {
-            { "niller", new Dictionary<DateTime, int> {
-                { new DateTime(2022, 10, 28), 2 },
-                { new DateTime(2022, 11, 1), 3 }
+        var expected = new Dictionary<string, Dictionary<string, int>> {
+            { "niller", new Dictionary<string, int> {
+                { new DateTime(2022, 10, 28).ToShortDateString(), 2 },
+                { new DateTime(2022, 11, 1).ToShortDateString(), 3 }
             } },
-            { "lauge-dev", new Dictionary<DateTime, int> {
-                { new DateTime(2022, 10, 28), 4 },
-                { new DateTime(2022, 11, 1), 5 }
+            { "lauge-dev", new Dictionary<string, int> {
+                { new DateTime(2022, 10, 28).ToShortDateString(), 4 },
+                { new DateTime(2022, 11, 1).ToShortDateString(), 5 }
             } }
         };
 
@@ -109,9 +109,9 @@ public class GitInsightTests
         var actual = git.getCommits();
 
         // Assert
-        (actual is Dictionary<string, Dictionary<DateTime, int>>).Should().BeTrue();
+        (actual is Dictionary<string, Dictionary<string, int>>).Should().BeTrue();
 
-        var actualDict = (Dictionary<string, Dictionary<DateTime, int>>)actual;
+        var actualDict = (Dictionary<string, Dictionary<string, int>>)actual;
         actualDict.Should().BeEquivalentTo(expected);
     }
 }
