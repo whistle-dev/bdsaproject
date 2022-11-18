@@ -87,6 +87,7 @@ When necessary, create describe interactions with your `GitInsight` application 
 You have to develop your `GitInsight` application in a public GitHub repository (on github.com).
 Before Friday 28/10 10:00, you have to send a pull-request to the file [./PROJECT_GROUPS.md](./PROJECT_GROUPS.md) in which you add the link to your repository.
 
+
 ## Week Two (Week 44)
 
 Extend and if necessary refactor your `GitInsight` application so that results from analyzing Git repositories are stored in a database.
@@ -107,6 +108,7 @@ Update your project documentation in the `docs` directory to reflect the latest 
 That is, illustrate the architecture of your tool with a suitable diagram.
 Additionally, based the project description so far, generate a list of functional and non-functional requirements and store them in a respective text file.
 
+
 ## Week Three (Week 45)
 
 Refactor your `GitInsight` application from last week from a command-line application into a web-application that exposes a REST API.
@@ -126,6 +128,7 @@ Likely it is also recommendable to add some API tests in a suitable format.
 
 Illustrate the architecture of your REST service using a suitable notation.
 Additionally, illustrate with an UML activity diagram the sequence of operations that your `GitInsight` application performs once triggered with a respective `GET` request and until it responds with the corresponding JSON data.
+
 
 ## Week Four (Week 46)
 

@@ -18,27 +18,29 @@ public class Connection
 
     public List<CommitDTO> fetchCommits(IRepository repo)
     {
-        var repoHash = repo.GetHashCode();
+        var repoPath = repo.Info.WorkingDirectory;
+        var latestCommitSha = repo.Head.Tip.Sha;
 
-        if (_repoRepository.Find(repoHash) == null)
+        if (_repoRepository.Find(repoPath) == null)
         {
-            _repoRepository.Create(new RepoCreateDTO(repoHash, repo.Info.WorkingDirectory));
+            _repoRepository.Create(new RepoCreateDTO(repo.Info.WorkingDirectory, null));
         }
 
-        if (_commitRepository.ReadAllInRepo(repoHash).Count() < repo.Commits.Count())
+        if (_repoRepository.Find(repoPath)!.LatestCommitSha == null || _repoRepository.Find(repoPath)!.LatestCommitSha != latestCommitSha)
         {
             Console.WriteLine("Adding commits to database");
             foreach (var commit in repo.Commits)
             {
-                _commitRepository.Create(new CommitCreateDTO(commit.GetHashCode(),
+                _commitRepository.Create(new CommitCreateDTO(commit.Sha,
                                                                 commit.Message,
                                                                 commit.Author.When.Date,
                                                                 commit.Author.Name,
-                                                                repoHash
+                                                                repoPath
                                                             ));
             }
+            _repoRepository.Update(new RepoUpdateDTO(repoPath, latestCommitSha));
         }
 
-        return (List<CommitDTO>)_commitRepository.ReadAllInRepo(repoHash);
+        return (List<CommitDTO>)_commitRepository.ReadAllInRepo(repoPath);
     }
 }

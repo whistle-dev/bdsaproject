@@ -12,38 +12,38 @@ public class GitInsightTests
         DateTime date1 = new DateTime(2022, 10, 28);
         DateTime date2 = new DateTime(2022, 11, 1);
 
-        // Setup fake hashes
-        var commitHashIncrement = 0;
-        var repoHash = 0;
+        // Setup fake primary keys
+        var commitShaIncrement = 0;
+        var repoPath = "path";
 
         // Commit different amount of times for each comitter on each date
 
         // 2x for niller on date 2022-10-28
         for (int i = 0; i < 2; i++)
         {
-            Commits.Add(new CommitDTO(commitHashIncrement, "Niller date 1 message " + i, date1, "niller", repoHash));
-            commitHashIncrement++;
+            Commits.Add(new CommitDTO("sha" + commitShaIncrement, "Niller date 1 message " + i, date1, "niller", repoPath));
+            commitShaIncrement++;
         }
 
         // 3x for niller on date 2022-11-01
         for (int i = 0; i < 3; i++)
         {
-            Commits.Add(new CommitDTO(commitHashIncrement, "Niller date 2 message " + i, date2, "niller", repoHash));
-            commitHashIncrement++;
+            Commits.Add(new CommitDTO("sha" + commitShaIncrement, "Niller date 2 message " + i, date2, "niller", repoPath));
+            commitShaIncrement++;
         }
 
         // 4x for lauge-dev on date 2022-10-28
         for (int i = 0; i < 4; i++)
         {
-            Commits.Add(new CommitDTO(commitHashIncrement, "Lauge date 1 message " + i, date1, "lauge-dev", repoHash));
-            commitHashIncrement++;
+            Commits.Add(new CommitDTO("sha" + commitShaIncrement, "Lauge date 1 message " + i, date1, "lauge-dev", repoPath));
+            commitShaIncrement++;
         }
 
         // 5x for lauge-dev on date 2022-11-01
         for (int i = 0; i < 5; i++)
         {
-            Commits.Add(new CommitDTO(commitHashIncrement, "Lauge date 2 message " + i, date2, "lauge-dev", repoHash));
-            commitHashIncrement++;
+            Commits.Add(new CommitDTO("sha" + commitShaIncrement, "Lauge date 2 message " + i, date2, "lauge-dev", repoPath));
+            commitShaIncrement++;
         }
     }
 
@@ -55,18 +55,6 @@ public class GitInsightTests
 
         // Assert
         act.Should().NotThrow();
-    }
-
-    [Fact]
-    public void GitInsight_Constructor_Should_Throw_Exception()
-    {
-        // Act
-        Action act = () => new app.GitInsight("wrong/path", 'f');
-
-        // Assert
-        act.Should().Throw<Exception>();
-        // In client it throws a RepositoryNotFoundException,
-        // while on github Actions it throws a System.TypeInitializationException.
     }
 
     [Fact]

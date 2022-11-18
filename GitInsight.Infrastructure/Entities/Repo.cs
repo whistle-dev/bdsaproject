@@ -2,14 +2,13 @@ namespace GitInsight.Infrastructure;
 
 public class Repo
 {
-    public int Hash { get; set; }
-    public string Name { get; set; }
+    public string Path { get; set; }
+    public string? LatestCommitSha { get; set; }
     public virtual ICollection<Commit> Commits { get; set; }
 
-    public Repo(int hash, string name)
+    public Repo(string path)
     {
-        Hash = hash;
-        Name = name;
+        Path = path;
         Commits = new List<Commit>();
     }
 }

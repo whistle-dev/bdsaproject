@@ -1,5 +1,5 @@
 namespace GitInsight.Core;
 
-public record CommitDTO(int Hash, string Message, System.DateTime Date, string Author, int RepoHash);
+public record CommitDTO(string Sha, string Message, System.DateTime Date, string Author, string RepoPath);
 
-public record CommitCreateDTO(int Hash, string Message, System.DateTime Date, string Author, int RepoHash);
+public record CommitCreateDTO(string Sha, string Message, System.DateTime Date, string Author, string RepoPath);

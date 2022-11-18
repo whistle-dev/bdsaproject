@@ -1,5 +1,7 @@
 namespace GitInsight.Core;
 
-public record RepoDTO(int Hash, string Name);
+public record RepoDTO(string Path, string? LatestCommitSha);
 
-public record RepoCreateDTO(int Hash, string Name);
+public record RepoCreateDTO(string Path, string? LatestCommitSha);
+
+public record RepoUpdateDTO(string Path, string? LatestCommitSha);
