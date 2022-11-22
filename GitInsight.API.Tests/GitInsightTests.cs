@@ -3,6 +3,7 @@ namespace GitInsight.API.Tests;
 public class GitInsightTests
 {
     public List<CommitDTO> Commits;
+    public string Path;
 
     public GitInsightTests()
     {
@@ -14,35 +15,35 @@ public class GitInsightTests
 
         // Setup fake primary keys
         var commitShaIncrement = 0;
-        var repoPath = "path";
+        Path = "path";
 
         // Commit different amount of times for each comitter on each date
 
         // 2x for niller on date 2022-10-28
         for (int i = 0; i < 2; i++)
         {
-            Commits.Add(new CommitDTO("sha" + commitShaIncrement, "Niller date 1 message " + i, date1, "niller", repoPath));
+            Commits.Add(new CommitDTO("sha" + commitShaIncrement, "Niller date 1 message " + i, date1, "niller", Path));
             commitShaIncrement++;
         }
 
         // 3x for niller on date 2022-11-01
         for (int i = 0; i < 3; i++)
         {
-            Commits.Add(new CommitDTO("sha" + commitShaIncrement, "Niller date 2 message " + i, date2, "niller", repoPath));
+            Commits.Add(new CommitDTO("sha" + commitShaIncrement, "Niller date 2 message " + i, date2, "niller", Path));
             commitShaIncrement++;
         }
 
         // 4x for lauge-dev on date 2022-10-28
         for (int i = 0; i < 4; i++)
         {
-            Commits.Add(new CommitDTO("sha" + commitShaIncrement, "Lauge date 1 message " + i, date1, "lauge-dev", repoPath));
+            Commits.Add(new CommitDTO("sha" + commitShaIncrement, "Lauge date 1 message " + i, date1, "lauge-dev", Path));
             commitShaIncrement++;
         }
 
         // 5x for lauge-dev on date 2022-11-01
         for (int i = 0; i < 5; i++)
         {
-            Commits.Add(new CommitDTO("sha" + commitShaIncrement, "Lauge date 2 message " + i, date2, "lauge-dev", repoPath));
+            Commits.Add(new CommitDTO("sha" + commitShaIncrement, "Lauge date 2 message " + i, date2, "lauge-dev", Path));
             commitShaIncrement++;
         }
     }
@@ -51,7 +52,7 @@ public class GitInsightTests
     public void GitInsight_Constructor_Should_Throw_No_Exceptions()
     {
         // Act
-        Action act = () => new GitInsight(Commits, 'f');
+        Action act = () => new GitInsight(Commits, 'f', Path);
 
         // Assert
         act.Should().NotThrow();
@@ -61,7 +62,7 @@ public class GitInsightTests
     public void GitInsight_Constructor_Should_Throw_ArgumentException()
     {
         // Act
-        Action act = () => new GitInsight(Commits, 'x');
+        Action act = () => new GitInsight(Commits, 'x', Path);
 
         // Assert
         act.Should().Throw<ArgumentException>();
@@ -71,7 +72,7 @@ public class GitInsightTests
     public void GetCommits_Frequency_Mode_Should_Return_Expected_Value()
     {
         // Arrange
-        GitInsight git = new GitInsight(Commits, 'f');
+        GitInsight git = new GitInsight(Commits, 'f', Path);
 
         var expected = new Dictionary<string, int> {
             { new DateTime(2022, 10, 28).ToShortDateString(), 6 },
@@ -89,7 +90,7 @@ public class GitInsightTests
     public void GetCommits_Author_Mode_Should_Return_Expected_Value()
     {
         // Arrange
-        GitInsight git = new GitInsight(Commits, 'a');
+        GitInsight git = new GitInsight(Commits, 'a', Path);
 
         var expected = new Dictionary<string, Dictionary<string, int>> {
             { "niller", new Dictionary<string, int> {
@@ -113,7 +114,7 @@ public class GitInsightTests
     public void GetCommitsFromAuthor_Should_Return_Expected_Value()
     {
         // Arrange
-        GitInsight git = new GitInsight(Commits, 'a');
+        GitInsight git = new GitInsight(Commits, 'a', Path);
 
         var expected = new Dictionary<string, int> {
             { new DateTime(2022, 10, 28).ToShortDateString(), 2 },

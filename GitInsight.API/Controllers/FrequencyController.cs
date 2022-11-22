@@ -15,8 +15,7 @@ public class FrequencyController : ControllerBase
         try
         {
             string url = $"https://github.com/{username}/{reponame}";
-            var git = new GitInsight(url, 'f');
-            await git.fetchCommitsFromDb();
+            var git = await GitInsight.BuildGitInsightAsync(url, 'f');
             var commits = git.getCommitsFrequency();
             git.removeRepo();
             return commits == null ? NotFound(): Ok(commits);
