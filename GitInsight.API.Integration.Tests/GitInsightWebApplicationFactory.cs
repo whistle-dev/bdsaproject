@@ -13,15 +13,9 @@ public class GitInsightWebApplicationFactory : WebApplicationFactory<Program>
                 services.Remove(descriptor);
             }
 
-            var configuration = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
-            var tempConnectionString = configuration.GetConnectionString("GitInsight")!;
-
-            var connectionString = Regex.Replace(tempConnectionString, "Database=[^;]+;", "Database="+Guid.NewGuid().ToString()+";");
-
-
             services.AddDbContext<GitInsightContext>(options =>
             {
-                options.UseSqlServer(connectionString);
+                options.UseSqlServer("Filename=:memory:");
             });
         });
 

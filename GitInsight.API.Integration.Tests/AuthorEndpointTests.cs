@@ -1,5 +1,6 @@
 namespace GitInsight.API.Integration.Tests;
 
+[Collection("IntegrationTests")]    // Neccessary to run integration tests sequentially, as they share the same tables
 public class AuthorEndpointTests
 {
     private readonly HttpClient _client;
