@@ -16,31 +16,35 @@ public class Connection
         _context.SaveChanges();
     }
 
-    public List<CommitDTO> fetchCommits(IRepository repo)
+    public async Task<List<CommitDTO>> fetchCommits(IRepository repo)
     {
         var repoPath = repo.Info.WorkingDirectory;
         var latestCommitSha = repo.Head.Tip.Sha;
 
-        if (_repoRepository.Find(repoPath) == null)
+        if (await _repoRepository.FindAsync(repoPath) == null)
         {
-            _repoRepository.Create(new RepoCreateDTO(repo.Info.WorkingDirectory, null));
+            await _repoRepository.CreateAsync(new RepoCreateDTO(repo.Info.WorkingDirectory, null));
         }
 
-        if (_repoRepository.Find(repoPath)!.LatestCommitSha == null || _repoRepository.Find(repoPath)!.LatestCommitSha != latestCommitSha)
+        var repoFromDb = await _repoRepository.FindAsync(repoPath);
+
+        if (repoFromDb!.LatestCommitSha == null || repoFromDb!.LatestCommitSha != latestCommitSha)
         {
             Console.WriteLine("Adding commits to database");
             foreach (var commit in repo.Commits)
             {
-                _commitRepository.Create(new CommitCreateDTO(commit.Sha,
+                await _commitRepository.CreateAsync(new CommitCreateDTO(commit.Sha,
                                                                 commit.Message,
                                                                 commit.Author.When.Date,
                                                                 commit.Author.Name,
                                                                 repoPath
                                                             ));
             }
-            _repoRepository.Update(new RepoUpdateDTO(repoPath, latestCommitSha));
+            await _repoRepository.UpdateAsync(new RepoUpdateDTO(repoPath, latestCommitSha));
         }
 
-        return (List<CommitDTO>)_commitRepository.ReadAllInRepo(repoPath);
+        var commitList = await _commitRepository.ReadAllInRepoAsync(repoPath);
+
+        return (List<CommitDTO>)commitList;
     }
 }

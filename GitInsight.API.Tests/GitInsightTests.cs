@@ -79,13 +79,10 @@ public class GitInsightTests
         };
 
         // Act
-        var actual = git.getCommits();
+        var actual = git.getCommitsFrequency();
 
         // Assert
-        (actual is Dictionary<string, int>).Should().BeTrue();
-
-        var actualDict = (Dictionary<string, int>)actual;
-        actualDict.Should().BeEquivalentTo(expected);
+        actual.Should().BeEquivalentTo(expected);
     }
 
     [Fact]
@@ -106,12 +103,27 @@ public class GitInsightTests
         };
 
         // Act
-        var actual = git.getCommits();
+        var actual = git.getCommitsAuthor();
 
         // Assert
-        (actual is Dictionary<string, Dictionary<string, int>>).Should().BeTrue();
+        actual.Should().BeEquivalentTo(expected);
+    }
 
-        var actualDict = (Dictionary<string, Dictionary<string, int>>)actual;
-        actualDict.Should().BeEquivalentTo(expected);
+    [Fact]
+    public void GetCommitsFromAuthor_Should_Return_Expected_Value()
+    {
+        // Arrange
+        GitInsight git = new GitInsight(Commits, 'a');
+
+        var expected = new Dictionary<string, int> {
+            { new DateTime(2022, 10, 28).ToShortDateString(), 2 },
+            { new DateTime(2022, 11, 1).ToShortDateString(), 3 }
+        };
+
+        // Act
+        var actual = git.getCommitsFromAuthor("niller");
+
+        // Assert
+        actual.Should().BeEquivalentTo(expected);
     }
 }

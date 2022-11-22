@@ -2,9 +2,9 @@ namespace GitInsight.Core
 {
     public interface ICommitRepository
     {
-        void Create(CommitCreateDTO commit);
-        CommitDTO? Find(string sha);
-        IReadOnlyCollection<CommitDTO> ReadAllInRepo(string repoPath);
+        Task CreateAsync(CommitCreateDTO commit);
+        Task<CommitDTO?> FindAsync(string sha);
+        Task<IReadOnlyCollection<CommitDTO>> ReadAllInRepoAsync(string repoPath);
     }
 
 }
