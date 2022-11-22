@@ -1,19 +1,20 @@
 namespace GitInsight.Infrastructure.Tests;
 
-public class CommitRepositoryTests : IDisposable
+public class CommitRepositoryTests : IAsyncDisposable
 {
     private readonly GitInsightContext _context;
+    private readonly SqliteConnection _connection;
     private readonly CommitRepository _commitRepository;
 
     public CommitRepositoryTests()
     {
         // Setup the in-memory database.
-        var connection = new SqliteConnection("Filename=:memory:");
-        connection.Open();
+        _connection = new SqliteConnection("Filename=:memory:");
+        _connection.Open();
 
         // Create the options for DbContext instance.
         var builder = new DbContextOptionsBuilder<GitInsightContext>()
-            .UseSqlite(connection);
+            .UseSqlite(_connection);
 
         // Create the instance of DbContext.
         var context = new GitInsightContext(builder.Options);
@@ -46,52 +47,52 @@ public class CommitRepositoryTests : IDisposable
     }
 
     [Fact]
-    public void Create_Should_Create_Commit()
+    public async Task Create_Should_Create_Commit()
     {
         // Arrange
         CommitCreateDTO commit = new CommitCreateDTO("sha10", "message10", new DateTime(2022, 11, 1), "name1", "path1");
 
         // Act
-        _commitRepository.Create(commit);
+        await _commitRepository.CreateAsync(commit);
 
         // Assert
         _context.Commits.Count().Should().Be(10);
     }
 
     [Fact]
-    public void Create_Should_Not_Create_Duplicate_Commit()
+    public async Task Create_Should_Not_Create_Duplicate_Commit()
     {
         // Arrange
         CommitCreateDTO commit = new CommitCreateDTO("sha1", "message1", new DateTime(2022, 10, 28), "name1", "path1");
 
         // Act
-        _commitRepository.Create(commit);
+        await _commitRepository.CreateAsync(commit);
 
         // Assert
         _context.Commits.Count().Should().Be(9);
     }
 
     [Fact]
-    public void Create_Should_Throw_ArgumentException_With_Missing_Repo_Message()
+    public async Task Create_Should_Throw_ArgumentException_With_Missing_Repo_Message()
     {
         // Arrange
         CommitCreateDTO commit = new CommitCreateDTO("sha10", "message10", new DateTime(2022, 11, 1), "name1", "path10");
 
         // Act
-        Action action = () => _commitRepository.Create(commit);
+        Func<Task> action = async () => await _commitRepository.CreateAsync(commit);
 
         // Assert
-        action.Should().Throw<ArgumentException>().WithMessage("Repo does not exist in database.");
+        await action.Should().ThrowAsync<ArgumentException>().WithMessage("Repo does not exist in database.");
     }
 
     [Fact]
-    public void Find_Should_Return_Commit()
+    public async Task Find_Should_Return_Commit()
     {
         // Arrange
         string sha = "sha1";
 
         // Act
-        CommitDTO? commit = _commitRepository.Find(sha);
+        CommitDTO? commit = await _commitRepository.FindAsync(sha);
 
         // Assert
         commit.Should().NotBeNull();
@@ -99,26 +100,26 @@ public class CommitRepositoryTests : IDisposable
     }
 
     [Fact]
-    public void Find_Should_Return_Null()
+    public async Task Find_Should_Return_Null()
     {
         // Arrange
         string sha = "sha10";
 
         // Act
-        CommitDTO? commit = _commitRepository.Find(sha);
+        CommitDTO? commit = await _commitRepository.FindAsync(sha);
 
         // Assert
         commit.Should().BeNull();
     }
 
     [Fact]
-    public void ReadAllInRepo_Should_Return_All_Commits_In_Repo()
+    public async Task ReadAllInRepo_Should_Return_All_Commits_In_Repo()
     {
         // Arrange
         string repo = "path1";
 
         // Act
-        IReadOnlyCollection<CommitDTO> commits = _commitRepository.ReadAllInRepo(repo);
+        IReadOnlyCollection<CommitDTO> commits = await _commitRepository.ReadAllInRepoAsync(repo);
 
         // Assert
         commits.Should().NotBeNull();
@@ -134,13 +135,13 @@ public class CommitRepositoryTests : IDisposable
     }
 
     [Fact]
-    public void ReadAllInRepo_Should_Return_Empty_List()
+    public async Task ReadAllInRepo_Should_Return_Empty_List()
     {
         // Arrange
         string repo = "path3";
 
         // Act
-        IReadOnlyCollection<CommitDTO> commits = _commitRepository.ReadAllInRepo(repo);
+        IReadOnlyCollection<CommitDTO> commits = await _commitRepository.ReadAllInRepoAsync(repo);
 
         // Assert
         commits.Should().NotBeNull();
@@ -148,20 +149,20 @@ public class CommitRepositoryTests : IDisposable
     }
 
     [Fact]
-    public void ReadAllInRepo_Should_Throw_ArgumentException()
+    public async Task ReadAllInRepo_Should_Throw_ArgumentException()
     {
         // Arrange
         string repo = "path4";
 
         // Act
-        Action action = () => _commitRepository.ReadAllInRepo(repo);
+        Func<Task> action = async () => await _commitRepository.ReadAllInRepoAsync(repo);
 
         // Assert
-        action.Should().Throw<ArgumentException>();
+        await action.Should().ThrowAsync<ArgumentException>();
     }
-
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
-        _context?.Dispose();
+        await _context.DisposeAsync();
+        await _connection.DisposeAsync();
     }
 }

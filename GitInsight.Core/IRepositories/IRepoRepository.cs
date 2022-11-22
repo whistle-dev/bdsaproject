@@ -2,9 +2,9 @@ namespace GitInsight.Core
 {
     public interface IRepoRepository
     {
-        void Create(RepoCreateDTO repo);
-        RepoDTO? Find(string path);
-        void Update(RepoUpdateDTO repo);
-        IReadOnlyCollection<RepoDTO> ReadAll();
+        Task CreateAsync(RepoCreateDTO repo);
+        Task<RepoDTO?> FindAsync(string path);
+        Task UpdateAsync(RepoUpdateDTO repo);
+        Task<IReadOnlyCollection<RepoDTO>> ReadAllAsync();
     }
 }

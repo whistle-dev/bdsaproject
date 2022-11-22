@@ -6,9 +6,9 @@ public class RepoRepository : IRepoRepository
 
     public RepoRepository(GitInsightContext context) => _context = context;
 
-    public void Create(RepoCreateDTO repo)
+    public async Task CreateAsync(RepoCreateDTO repo)
     {
-        var isRepoInDb = _context.Repos.Any(r => r.Path == repo.Path);
+        var isRepoInDb = await _context.Repos.AnyAsync(r => r.Path == repo.Path);
 
         if (isRepoInDb)
         {
@@ -19,22 +19,22 @@ public class RepoRepository : IRepoRepository
             var repoEntity = new Repo(repo.Path) { LatestCommitSha = repo.LatestCommitSha };
 
             _context.Repos.Add(repoEntity);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
     }
 
-    public RepoDTO? Find(string path)
+    public async Task<RepoDTO?> FindAsync(string path)
     {
         var repo = from r in _context.Repos
                    where r.Path == path
                    select new RepoDTO(r.Path, r.LatestCommitSha);
 
-        return repo.FirstOrDefault();
+        return await repo.FirstOrDefaultAsync();
     }
 
-    public void Update(RepoUpdateDTO repo)
+    public async Task UpdateAsync(RepoUpdateDTO repo)
     {
-        var isRepoInDb = _context.Repos.Any(r => r.Path == repo.Path);
+        var isRepoInDb = await _context.Repos.AnyAsync(r => r.Path == repo.Path);
 
         if (!isRepoInDb)
         {
@@ -42,19 +42,19 @@ public class RepoRepository : IRepoRepository
         }
         else
         {
-            var repoEntity = _context.Repos.First(r => r.Path == repo.Path);
+            var repoEntity = await _context.Repos.FirstAsync(r => r.Path == repo.Path);
 
             repoEntity.LatestCommitSha = repo.LatestCommitSha;
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
     }
 
-    public IReadOnlyCollection<RepoDTO> ReadAll()
+    public async Task<IReadOnlyCollection<RepoDTO>> ReadAllAsync()
     {
         var repos = from r in _context.Repos
                     select new RepoDTO(r.Path, r.LatestCommitSha);
 
-        return repos.ToList();
+        return await repos.ToListAsync();
     }
 }
