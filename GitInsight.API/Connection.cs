@@ -16,14 +16,13 @@ public class Connection
         _context.SaveChanges();
     }
 
-    public async Task<List<CommitDTO>> fetchCommits(IRepository repo)
+    public async Task<List<CommitDTO>> fetchCommits(string repoPath, IRepository repo)
     {
-        var repoPath = repo.Info.WorkingDirectory;
         var latestCommitSha = repo.Head.Tip.Sha;
 
         if (await _repoRepository.FindAsync(repoPath) == null)
         {
-            await _repoRepository.CreateAsync(new RepoCreateDTO(repo.Info.WorkingDirectory, null));
+            await _repoRepository.CreateAsync(new RepoCreateDTO(repoPath, null));
         }
 
         var repoFromDb = await _repoRepository.FindAsync(repoPath);

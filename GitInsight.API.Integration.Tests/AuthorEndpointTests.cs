@@ -1,4 +1,4 @@
-namespace GitInsight.API.Tests;
+namespace GitInsight.API.Integration.Tests;
 
 public class AuthorEndpointTests
 {
@@ -18,20 +18,20 @@ public class AuthorEndpointTests
     {
         // Arrange
         var expected = new Dictionary<string, Dictionary<string, int>> {
-            { "12-10-2022", new Dictionary<string, int> {
-                { "2rius", 1 },
-                { "Rasmus Nielsen", 3 }
+            { "2rius", new Dictionary<string, int> {
+                { "12-10-2022", 1 },
+                { "18-10-2022", 3 },
+                { "26-10-2022", 6 }
             } },
-            { "18-10-2022", new Dictionary<string, int> {
-                { "2rius", 3 },
-                { "Max", 2 }
+            { "Rasmus Nielsen", new Dictionary<string, int> {
+                { "12-10-2022", 3 },
+                { "26-10-2022", 2 }
             } },
-            { "26-10-2022", new Dictionary<string, int> {
-                { "2rius", 6 },
-                { "Rasmus Nielsen", 2 }
+            { "Max", new Dictionary<string, int> {
+                { "18-10-2022", 2 }
             } },
-            { "31-10-2022", new Dictionary<string, int> {
-                { "mfoman", 1 }
+            { "mfoman", new Dictionary<string, int> {
+                { "31-10-2022", 1 }
             } }
         };
 

@@ -14,14 +14,12 @@ public class AuthorController : ControllerBase
     {
         try
         {
-            string url = $"https://github.com/{username}/{reponame}";
-            var git = await GitInsight.BuildGitInsightAsync(url, 'a');
+            var git = await GitInsight.BuildGitInsightAsync(username, reponame, 'a');
             var commits = git.getCommitsAuthor();
             git.removeRepo();
             return commits == null ? NotFound(): Ok(commits);
-
         }
-        catch (System.Exception)
+        catch (Exception)
         {
             return NotFound();
         }
@@ -37,13 +35,12 @@ public class AuthorController : ControllerBase
     {
         try
         {
-            string url = $"https://github.com/{username}/{reponame}";
-            var git = await GitInsight.BuildGitInsightAsync(url, 'a');
+            var git = await GitInsight.BuildGitInsightAsync(username, reponame, 'a');
             var commits = git.getCommitsFromAuthor(author);
             git.removeRepo();
             return commits == null ? NotFound(): Ok(commits);
         }
-        catch (System.Exception)
+        catch (Exception)
         {
             return NotFound();
         }

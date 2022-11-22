@@ -19,29 +19,28 @@ public class GitInsight
         this.path = path;
     }
 
-    async public static Task<GitInsight> BuildGitInsightAsync(string url, char mode)
+    async public static Task<GitInsight> BuildGitInsightAsync(string repoAuthor, string repoName, char mode)
     {
-        string[] urlSplitted = url.Split("/");
-        string repoAuthor = urlSplitted[urlSplitted.Length - 2];
-        string repoName = urlSplitted[urlSplitted.Length - 1];
+        string url = $"https://github.com/{repoAuthor}/{repoName}";
         
-        var path = Path.Combine(Path.GetTempPath(), repoAuthor, repoName);
+        var localPath = Path.Combine(Path.GetTempPath(), "GitInsight", Guid.NewGuid().ToString());
+        var repoPath = Path.Combine(repoAuthor, repoName);
 
         Console.WriteLine("Cloning repository ...");
-        if (Directory.Exists(path))
+        if (Directory.Exists(localPath))
         {
-            removeRepo(path);
+            removeRepo(localPath);
         }
-        Repository.Clone(url, path);
+        Repository.Clone(url, localPath);
         Console.WriteLine("Repository cloned.");
         
-        var repoFromPath = new Repository(path);
+        var repoFromPath = new Repository(localPath);
         var connection = new Connection();
 
-        var commits = await connection.fetchCommits(repoFromPath);
+        var commits = await connection.fetchCommits(repoPath, repoFromPath);
         repoFromPath.Dispose();
 
-        return new GitInsight(commits, mode, path);
+        return new GitInsight(commits, mode, localPath);
     }
 
     public static void removeRepo(string path)
@@ -58,7 +57,7 @@ public class GitInsight
         }
         catch (System.Exception)
         {
-
+            
         }
     }
 

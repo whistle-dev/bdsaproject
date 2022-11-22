@@ -14,13 +14,12 @@ public class FrequencyController : ControllerBase
     {
         try
         {
-            string url = $"https://github.com/{username}/{reponame}";
-            var git = await GitInsight.BuildGitInsightAsync(url, 'f');
+            var git = await GitInsight.BuildGitInsightAsync(username, reponame, 'f');
             var commits = git.getCommitsFrequency();
             git.removeRepo();
             return commits == null ? NotFound(): Ok(commits);
         }
-        catch (System.Exception)
+        catch (Exception)
         {
             return NotFound();
         }

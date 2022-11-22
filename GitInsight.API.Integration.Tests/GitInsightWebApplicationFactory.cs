@@ -1,6 +1,6 @@
-namespace GitInsight.API.Tests;
+namespace GitInsight.API.Integration.Tests;
 
-public class GitInsightWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
+public class GitInsightWebApplicationFactory : WebApplicationFactory<Program>
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
@@ -26,19 +26,5 @@ public class GitInsightWebApplicationFactory : WebApplicationFactory<Program>, I
         });
 
         builder.UseEnvironment("Development");
-    }
-
-    public async Task InitializeAsync()
-    {
-        using var scope = Services.CreateAsyncScope();
-        using var context = scope.ServiceProvider.GetRequiredService<GitInsightContext>();
-        await context.Database.EnsureCreatedAsync();
-    }
-
-    async Task IAsyncLifetime.DisposeAsync()
-    {
-        using var scope = Services.CreateAsyncScope();
-        using var context = scope.ServiceProvider.GetRequiredService<GitInsightContext>();
-        await context.Database.EnsureDeletedAsync();
     }
 }
