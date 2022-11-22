@@ -6,24 +6,7 @@ public class GitInsight
     private string path;
     public char Mode;
 
-    public GitInsight(String url, char mode) : this(new List<CommitDTO>(), mode)
-    {
-        string[] urlSplitted = url.Split("/");
-        string repoAuthor = urlSplitted[urlSplitted.Length - 2];
-        string repoName = urlSplitted[urlSplitted.Length - 1];
-
-        Console.WriteLine("Cloning repository ...");
-        path = Path.Combine(Path.GetTempPath(), repoAuthor, repoName);
-
-        if (Directory.Exists(path))
-        {
-            removeRepo();
-        }
-        Repository.Clone(url, path);
-        Console.WriteLine("Repository cloned.");
-    }
-
-    public GitInsight(List<CommitDTO> _commits, char mode)
+    public GitInsight(List<CommitDTO> _commits, char mode, string path)
     {
         commits = _commits;
         commits.Sort((x, y) => DateTime.Compare(x.Date, y.Date));
@@ -33,24 +16,38 @@ public class GitInsight
             throw new ArgumentException("Invalid mode");
         }
         Mode = mode;
-        path = "";
+        this.path = path;
     }
 
-    public async Task fetchCommitsFromDb()
+    async public static Task<GitInsight> BuildGitInsightAsync(string url, char mode)
     {
+        string[] urlSplitted = url.Split("/");
+        string repoAuthor = urlSplitted[urlSplitted.Length - 2];
+        string repoName = urlSplitted[urlSplitted.Length - 1];
+        
+        var path = Path.Combine(Path.GetTempPath(), repoAuthor, repoName);
+
+        Console.WriteLine("Cloning repository ...");
+        if (Directory.Exists(path))
+        {
+            removeRepo(path);
+        }
+        Repository.Clone(url, path);
+        Console.WriteLine("Repository cloned.");
+        
         var repoFromPath = new Repository(path);
         var connection = new Connection();
-        commits = await connection.fetchCommits(repoFromPath);
-        commits.Sort((x, y) => DateTime.Compare(x.Date, y.Date));
+
+        var commits = await connection.fetchCommits(repoFromPath);
         repoFromPath.Dispose();
+
+        return new GitInsight(commits, mode, path);
     }
 
-    public void removeRepo()
+    public static void removeRepo(string path)
     {
         try
         {
-            // string path = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\Downloads\\GitInsight";
-
             var directory = new DirectoryInfo(path) { Attributes = FileAttributes.Normal };
 
             foreach (var info in directory.GetFileSystemInfos("*", SearchOption.AllDirectories))
@@ -65,12 +62,15 @@ public class GitInsight
         }
     }
 
+    public void removeRepo()
+    {
+        removeRepo(path);
+    }
+
     public Dictionary<string, int> getCommitsFromAuthor(string author)
     {
-
         var commits = getCommitsAuthor()[author];
         return commits;
-
     }
 
     public Dictionary<string, int> getCommitsFrequency()
@@ -120,4 +120,27 @@ public class GitInsight
         return commitsByAuthor;
     }
 
+    public void printCommits()
+    {
+        if (Mode == 'f')
+        {
+            foreach (var commit in getCommitsFrequency())
+            {
+                Console.WriteLine(commit.Value + " " + commit.Key);
+            }
+        }
+        else if (Mode == 'a')
+        {
+            foreach (var author in getCommitsAuthor())
+            {
+                Console.WriteLine(author.Key);
+                foreach (var commit in author.Value)
+                {
+                    Console.WriteLine("".PadLeft(5) + commit.Value + " " + commit.Key);
+                }
+                Console.WriteLine();
+            }
+
+        }
+    }
 }

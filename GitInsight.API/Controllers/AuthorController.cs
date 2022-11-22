@@ -15,8 +15,7 @@ public class AuthorController : ControllerBase
         try
         {
             string url = $"https://github.com/{username}/{reponame}";
-            var git = new GitInsight(url, 'a');
-            await git.fetchCommitsFromDb();
+            var git = await GitInsight.BuildGitInsightAsync(url, 'a');
             var commits = git.getCommitsAuthor();
             git.removeRepo();
             return commits == null ? NotFound(): Ok(commits);
@@ -39,8 +38,7 @@ public class AuthorController : ControllerBase
         try
         {
             string url = $"https://github.com/{username}/{reponame}";
-            var git = new GitInsight(url, 'a');
-            await git.fetchCommitsFromDb();
+            var git = await GitInsight.BuildGitInsightAsync(url, 'a');
             var commits = git.getCommitsFromAuthor(author);
             git.removeRepo();
             return commits == null ? NotFound(): Ok(commits);
