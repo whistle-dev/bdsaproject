@@ -1,19 +1,20 @@
 namespace GitInsight.Infrastructure.Tests;
 
-public class RepoRepositoryTests : IDisposable
+public class RepoRepositoryTests : IAsyncDisposable
 {
     private readonly GitInsightContext _context;
+    private readonly SqliteConnection _connection;
     private readonly RepoRepository _repoRepository;
 
     public RepoRepositoryTests()
     {
         // Setup the in-memory database.
-        var connection = new SqliteConnection("Filename=:memory:");
-        connection.Open();
+        _connection = new SqliteConnection("Filename=:memory:");
+        _connection.Open();
 
         // Create the options for DbContext instance.
         var builder = new DbContextOptionsBuilder<GitInsightContext>()
-            .UseSqlite(connection);
+            .UseSqlite(_connection);
 
         // Create the instance of DbContext.
         var context = new GitInsightContext(builder.Options);
@@ -33,40 +34,40 @@ public class RepoRepositoryTests : IDisposable
     }
 
     [Fact]
-    public void Create_Should_Create_Repo()
+    public async Task Create_Should_Create_Repo()
     {
         // Arrange
         RepoCreateDTO repo = new RepoCreateDTO("path4", null);
 
         // Act
-        _repoRepository.Create(repo);
+        await _repoRepository.CreateAsync(repo);
 
         // Assert
         _context.Repos.Count().Should().Be(4);
     }
 
     [Fact]
-    public void Create_Should_Throw_ArgumentException()
+    public async Task Create_Should_Throw_ArgumentException()
     {
         // Arrange
         RepoCreateDTO repo = new RepoCreateDTO("path1", null);
 
         // Act
-        Action action = () => _repoRepository.Create(repo);
+        Func<Task> action = async () => await _repoRepository.CreateAsync(repo);
 
         // Assert
-        action.Should().Throw<ArgumentException>();
+        await action.Should().ThrowAsync<ArgumentException>();
         _context.Repos.Count().Should().Be(3);
     }
 
     [Fact]
-    public void Find_Should_Return_Repo()
+    public async Task Find_Should_Return_Repo()
     {
         // Arrange
         string path = "path1";
 
         // Act
-        RepoDTO? repo = _repoRepository.Find(path);
+        RepoDTO? repo = await _repoRepository.FindAsync(path);
 
         // Assert
         repo.Should().NotBeNull();
@@ -74,52 +75,53 @@ public class RepoRepositoryTests : IDisposable
     }
 
     [Fact]
-    public void Find_Should_Return_Null()
+    public async Task Find_Should_Return_Null()
     {
         // Arrange
         string path = "path4";
 
         // Act
-        RepoDTO? repo = _repoRepository.Find(path);
+        RepoDTO? repo = await _repoRepository.FindAsync(path);
 
         // Assert
         repo.Should().BeNull();
     }
 
     [Fact]
-    public void Update_Should_Update_Repo()
+    public async Task Update_Should_Update_Repo()
     {
         // Arrange
         RepoUpdateDTO repo = new RepoUpdateDTO("path1", "sha1");
 
         // Act
-        _repoRepository.Update(repo);
+        await _repoRepository.UpdateAsync(repo);
 
         // Assert
-        _context.Repos.First(r => r.Path == "path1").LatestCommitSha.Should().Be("sha1");
+        var r = await _context.Repos.FirstAsync(r => r.Path == "path1");
+        r.LatestCommitSha.Should().Be("sha1");
     }
 
     [Fact]
-    public void Update_Should_Throw_ArgumentException()
+    public async Task Update_Should_Throw_ArgumentException()
     {
         // Arrange
         RepoUpdateDTO repo = new RepoUpdateDTO("path4", "sha1");
 
         // Act
-        Action action = () => _repoRepository.Update(repo);
+        Func<Task> action = async () => await _repoRepository.UpdateAsync(repo);
 
         // Assert
-        action.Should().Throw<ArgumentException>();
+        await action.Should().ThrowAsync<ArgumentException>();
     }
 
     [Fact]
-    public void ReadAll_Should_Return_All_Repos()
+    public async Task ReadAll_Should_Return_All_Repos()
     {
         // Arrange
         IReadOnlyCollection<RepoDTO> repos;
 
         // Act
-        repos = _repoRepository.ReadAll();
+        repos = await _repoRepository.ReadAllAsync();
 
         // Assert
         repos.Should().NotBeNull();
@@ -133,23 +135,24 @@ public class RepoRepositoryTests : IDisposable
     }
 
     [Fact]
-    public void ReadAll_Should_Return_Empty_List()
+    public async Task ReadAll_Should_Return_Empty_List()
     {
         // Arrange
         IReadOnlyCollection<RepoDTO> repos;
 
         // Act
         _context.Repos.RemoveRange(_context.Repos);
-        _context.SaveChanges();
-        repos = _repoRepository.ReadAll();
+        await _context.SaveChangesAsync();
+        repos = await _repoRepository.ReadAllAsync();
 
         // Assert
         repos.Should().NotBeNull();
         repos.Should().BeEmpty();
     }
 
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
-        _context?.Dispose();
+        await _context.DisposeAsync();
+        await _connection.DisposeAsync();
     }
 }

@@ -21,14 +21,6 @@ public class GitInsight
         }
         Repository.Clone(url, path);
         Console.WriteLine("Repository cloned.");
-        var repoFromPath = new Repository(path);
-
-        var connection = new Connection();
-        commits = connection.fetchCommits(repoFromPath);
-        commits.Sort((x, y) => DateTime.Compare(x.Date, y.Date));
-
-        repoFromPath.Dispose();
-
     }
 
     public GitInsight(List<CommitDTO> _commits, char mode)
@@ -42,6 +34,15 @@ public class GitInsight
         }
         Mode = mode;
         path = "";
+    }
+
+    public async Task fetchCommitsFromDb()
+    {
+        var repoFromPath = new Repository(path);
+        var connection = new Connection();
+        commits = await connection.fetchCommits(repoFromPath);
+        commits.Sort((x, y) => DateTime.Compare(x.Date, y.Date));
+        repoFromPath.Dispose();
     }
 
     public void removeRepo()
@@ -72,25 +73,7 @@ public class GitInsight
 
     }
 
-
-
-    public dynamic getCommits()
-    {
-        if (Mode == 'f')
-        {
-            return getCommitsFrequency();
-        }
-        else if (Mode == 'a')
-        {
-            return getCommitsAuthor();
-        }
-        else
-        {
-            throw new ArgumentException("Invalid mode");
-        }
-    }
-
-    private Dictionary<string, int> getCommitsFrequency()
+    public Dictionary<string, int> getCommitsFrequency()
     {
         var commitsByDate = new Dictionary<string, int>();
         foreach (var commit in commits)
@@ -109,35 +92,7 @@ public class GitInsight
         return commitsByDate;
     }
 
-    public Dictionary<string, Dictionary<string, int>> getDateWithAuthorCommits()
-    {
-        var commitsByDate = new Dictionary<string, Dictionary<string, int>>();
-        foreach (var commit in commits)
-        {
-            var date = commit.Date.ToShortDateString();
-            var author = commit.Author;
-            if (commitsByDate.ContainsKey(date))
-            {
-                var commitsByAuthor = commitsByDate[date];
-                if (commitsByAuthor.ContainsKey(author))
-                {
-                    commitsByAuthor[author]++;
-                }
-                else
-                {
-                    commitsByAuthor[author] = 1;
-                }
-            }
-            else
-            {
-                commitsByDate[date] = new Dictionary<string, int> { { author, 1 } };
-            }
-        }
-        return commitsByDate;
-    }
-
-
-    private Dictionary<string, Dictionary<string, int>> getCommitsAuthor()
+    public Dictionary<string, Dictionary<string, int>> getCommitsAuthor()
     {
         var commitsByAuthor = new Dictionary<string, Dictionary<string, int>>();
         foreach (var commit in commits)
