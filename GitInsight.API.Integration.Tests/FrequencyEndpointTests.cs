@@ -18,10 +18,10 @@ public class FrequencyEndpointTests
     {
         // Arrange
         var expected = new Dictionary<string, int> {
-            { "12-10-2022", 4 },
-            { "18-10-2022", 5 },
-            { "26-10-2022", 8 },
-            { "31-10-2022", 1 }
+            { new DateTime(2022, 10, 12).ToShortDateString(), 4 },
+            { new DateTime(2022, 10, 18).ToShortDateString(), 5 },
+            { new DateTime(2022, 10, 26).ToShortDateString(), 8 },
+            { new DateTime(2022, 10, 31).ToShortDateString(), 1 }
         };
 
         // Act

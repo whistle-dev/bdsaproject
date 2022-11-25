@@ -77,7 +77,7 @@ public class GitInsight
         var commitsByDate = new Dictionary<string, int>();
         foreach (var commit in commits)
         {
-            var date = commit.Date.ToString("dd-MM-yyyy");
+            var date = commit.Date.ToShortDateString();
             if (commitsByDate.ContainsKey(date))
             {
                 commitsByDate[date]++;
@@ -96,7 +96,7 @@ public class GitInsight
         var commitsByAuthor = new Dictionary<string, Dictionary<string, int>>();
         foreach (var commit in commits)
         {
-            var date = commit.Date.ToString("dd-MM-yyyy");
+            var date = commit.Date.ToShortDateString();
             var author = commit.Author;
             if (commitsByAuthor.ContainsKey(author))
             {

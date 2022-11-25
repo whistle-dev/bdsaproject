@@ -20,19 +20,19 @@ public class AuthorEndpointTests
         // Arrange
         var expected = new Dictionary<string, Dictionary<string, int>> {
             { "2rius", new Dictionary<string, int> {
-                { "12-10-2022", 1 },
-                { "18-10-2022", 3 },
-                { "26-10-2022", 6 }
+                { new DateTime(2022, 10, 12).ToShortDateString(), 1 },
+                { new DateTime(2022, 10, 18).ToShortDateString(), 3 },
+                { new DateTime(2022, 10, 26).ToShortDateString(), 6 }
             } },
             { "Rasmus Nielsen", new Dictionary<string, int> {
-                { "12-10-2022", 3 },
-                { "26-10-2022", 2 }
+                { new DateTime(2022, 10, 12).ToShortDateString(), 3 },
+                { new DateTime(2022, 10, 26).ToShortDateString(), 2 }
             } },
             { "Max", new Dictionary<string, int> {
-                { "18-10-2022", 2 }
+                { new DateTime(2022, 10, 18).ToShortDateString(), 2 }
             } },
             { "mfoman", new Dictionary<string, int> {
-                { "31-10-2022", 1 }
+                { new DateTime(2022, 10, 31).ToShortDateString(), 1 }
             } }
         };
 
@@ -48,9 +48,9 @@ public class AuthorEndpointTests
     {
         // Arrange
         var expected = new Dictionary<string, int> {
-            { "12-10-2022", 1 },
-            { "18-10-2022", 3 },
-            { "26-10-2022", 6 }
+            { new DateTime(2022, 10, 12).ToShortDateString(), 1 },
+            { new DateTime(2022, 10, 18).ToShortDateString(), 3 },
+            { new DateTime(2022, 10, 26).ToShortDateString(), 6 }
         };
 
         // Act
