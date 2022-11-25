@@ -19,7 +19,7 @@ public class GitInsight
         this.path = path;
     }
 
-    async public static Task<GitInsight> BuildGitInsightAsync(string repoAuthor, string repoName, char mode)
+    async public static Task<GitInsight> BuildGitInsightAsync(string repoAuthor, string repoName, char mode, ICommitRepository commits, IRepoRepository repos)
     {
         string url = $"https://github.com/{repoAuthor}/{repoName}";
         
@@ -35,12 +35,12 @@ public class GitInsight
         Console.WriteLine("Repository cloned.");
         
         var repoFromPath = new Repository(localPath);
-        var connection = new Connection();
+        var connection = new Connection(commits, repos);
 
-        var commits = await connection.fetchCommits(repoPath, repoFromPath);
+        var updatedcommits = await connection.FetchCommitsAsync(repoPath, repoFromPath);
         repoFromPath.Dispose();
 
-        return new GitInsight(commits, mode, localPath);
+        return new GitInsight(updatedcommits, mode, localPath);
     }
 
     public static void removeRepo(string path)

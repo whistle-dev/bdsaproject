@@ -1,5 +1,13 @@
 var builder = WebApplication.CreateBuilder(args);
 
+var configuration = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
+var connectionString = configuration.GetConnectionString("GitInsight");
+
+builder.Services.AddDbContext<GitInsightContext>(options => options.UseSqlServer(connectionString));
+
+builder.Services.AddScoped<IRepoRepository, RepoRepository>();
+builder.Services.AddScoped<ICommitRepository, CommitRepository>();
+
 // Add services to the container.
 
 builder.Services.AddControllers();

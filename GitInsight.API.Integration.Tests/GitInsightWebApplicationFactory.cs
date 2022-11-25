@@ -4,7 +4,7 @@ public class GitInsightWebApplicationFactory : WebApplicationFactory<Program>
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        builder.ConfigureTestServices(services => 
+        builder.ConfigureTestServices(services =>
         {
             var descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<GitInsightContext>));
 
@@ -15,7 +15,7 @@ public class GitInsightWebApplicationFactory : WebApplicationFactory<Program>
 
             services.AddDbContext<GitInsightContext>(options =>
             {
-                options.UseSqlServer("Filename=:memory:");
+                options.UseInMemoryDatabase("GitInsightTestDB");
             });
         });
 

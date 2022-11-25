@@ -2,21 +2,15 @@ namespace GitInsight.API;
 
 public class Connection
 {
-    private readonly GitInsightContext _context;
-    private readonly CommitRepository _commitRepository;
-    private readonly RepoRepository _repoRepository;
-
-    public Connection()
+    private readonly ICommitRepository _commitRepository;
+    private readonly IRepoRepository _repoRepository;
+    public Connection(ICommitRepository commitRepository, IRepoRepository repoRepository)
     {
-        var factory = new GitInsightContextFactory();
-        _context = factory.CreateDbContext(new string[0]);
-        _context.Database.EnsureCreated();
-        _commitRepository = new CommitRepository(_context);
-        _repoRepository = new RepoRepository(_context);
-        _context.SaveChanges();
+        _commitRepository = commitRepository;
+        _repoRepository = repoRepository;
     }
 
-    public async Task<List<CommitDTO>> fetchCommits(string repoPath, IRepository repo)
+    public async Task<List<CommitDTO>> FetchCommitsAsync(string repoPath, IRepository repo)
     {
         var latestCommitSha = repo.Head.Tip.Sha;
 
@@ -43,6 +37,8 @@ public class Connection
         }
 
         var commitList = await _commitRepository.ReadAllInRepoAsync(repoPath);
+
+        repo.Dispose();
 
         return (List<CommitDTO>)commitList;
     }
