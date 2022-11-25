@@ -2,8 +2,59 @@
 
 <PageTitle>Index</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1>GitInsights™</h1>
+<p>Welcome to the insights!</p>
+<hr>
 
-Welcome to your new app.
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+<div class="row">
+  <div class="col-3">
+    <RadzenTextBox Placeholder="Username" Class="w-100" @oninput="@(args => SetUsername(args.Value.ToString()))" />
+  </div>
+  <div class="col-3">
+    <RadzenTextBox Placeholder="Repository" Class="w-100" @oninput="@(args => SetRepository(args.Value.ToString()))" />
+  </div>
+  <div class="col-3">
+    <RadzenSelectBar @bind-Value=@mode TValue="string" Change=@(args => OnChange(args, "SelectBar with single selection"))>
+        <Items>
+            <RadzenSelectBarItem Text="Author" Value="authorValue" />
+            <RadzenSelectBarItem Text="Frequency" Value="frequencyValue" />
+        </Items>
+    </RadzenSelectBar>
+  </div>
+  <div class="col-3">
+    <RadzenButton Click=@RunProgram Text="Run!" ButtonStyle="ButtonStyle.Secondary"></RadzenButton> 
+  </div>
+</div>
+       
+  @* @if(mode == "author") {
+    <input type="text" placeholder="Author Username" @bind="@authorUsername" @oninput="@(ui => {authorUsername = (string) ui.Value;})" />
+  } *@
+
+<p class="alert alert-info">Confirm <strong>@username/@repository</strong> with mode <strong>@mode</strong>.</p>
+
+<ColumnChart></ColumnChart>
+
+@code {
+  string username;
+  private string repository;
+  private string mode = "author";
+  string authorValue = "author";
+  string frequencyValue = "frequency";
+  private string authorUsername;
+
+  void OnChange(object value, string name)
+  {
+    var str = value is IEnumerable<int> ? string.Join(", ", (IEnumerable<int>)value) : value;
+  }
+
+  void SetUsername(string value) {
+    username = value;
+  }
+  void SetRepository(string value) {
+    repository = value;
+  }
+  private void RunProgram() {
+    Console.WriteLine("Run Gitinsights!");
+  }
+}
