@@ -28,6 +28,6 @@ public class FrequencyEndpointTests
         var frequencyMode = await _client.GetFromJsonAsync<Dictionary<string, int>>("Frequency" + _testRepo);
 
         // Assert
-        expected.Should().BeEquivalentTo(frequencyMode);
+        frequencyMode.Should().BeEquivalentTo(expected);
     }
 }
