@@ -75,8 +75,8 @@ public class GitInsightTests
         GitInsight git = new GitInsight(Commits, 'f', Path);
 
         var expected = new Dictionary<string, int> {
-            { new DateTime(2022, 10, 28).ToShortDateString(), 6 },
-            { new DateTime(2022, 11, 1).ToShortDateString(), 8 }
+            { new DateTime(2022, 10, 28).ToString("dd-MM-yyyy"), 6 },
+            { new DateTime(2022, 11, 1).ToString("dd-MM-yyyy"), 8 }
         };
 
         // Act
@@ -94,12 +94,12 @@ public class GitInsightTests
 
         var expected = new Dictionary<string, Dictionary<string, int>> {
             { "niller", new Dictionary<string, int> {
-                { new DateTime(2022, 10, 28).ToShortDateString(), 2 },
-                { new DateTime(2022, 11, 1).ToShortDateString(), 3 }
+                { new DateTime(2022, 10, 28).ToString("dd-MM-yyyy"), 2 },
+                { new DateTime(2022, 11, 1).ToString("dd-MM-yyyy"), 3 }
             } },
             { "lauge-dev", new Dictionary<string, int> {
-                { new DateTime(2022, 10, 28).ToShortDateString(), 4 },
-                { new DateTime(2022, 11, 1).ToShortDateString(), 5 }
+                { new DateTime(2022, 10, 28).ToString("dd-MM-yyyy"), 4 },
+                { new DateTime(2022, 11, 1).ToString("dd-MM-yyyy"), 5 }
             } }
         };
 
@@ -117,8 +117,8 @@ public class GitInsightTests
         GitInsight git = new GitInsight(Commits, 'a', Path);
 
         var expected = new Dictionary<string, int> {
-            { new DateTime(2022, 10, 28).ToShortDateString(), 2 },
-            { new DateTime(2022, 11, 1).ToShortDateString(), 3 }
+            { new DateTime(2022, 10, 28).ToString("dd-MM-yyyy"), 2 },
+            { new DateTime(2022, 11, 1).ToString("dd-MM-yyyy"), 3 }
         };
 
         // Act
