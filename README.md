@@ -29,5 +29,5 @@
 4.  Run the following command
 
     ```bash
-    dotnet watch run --project GitInsight.API
+    dotnet watch run --project .\GitInsight.API\
     ```
