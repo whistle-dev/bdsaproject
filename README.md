@@ -4,17 +4,11 @@
 
 ### Prerequisites
 
-<<<<<<< HEAD
 -   [Docker](https://www.docker.com/)
 -   [.NET 7.0](https://dotnet.microsoft.com/download/dotnet/7.0)
 -   [.NET Tool for EF Core](https://docs.microsoft.com/en-us/ef/core/cli/dotnet)
 -   Initialized User Secrets
 
-=======
-- [Docker](https://www.docker.com/)
-- [.NET 7.0](https://dotnet.microsoft.com/download/dotnet/7.0)
-- Initialized User Secrets
->>>>>>> db1fea5722c247a9d13f040f170ee8da7337e55a
 
 ### Run the project
 
@@ -36,9 +30,4 @@
 
     ```bash
     dotnet watch run --project GitInsight.API
-    ```
-
-4.  If new docker image run following commands:
-    ```
-    dotnet ef database update --project .\GitInsight.Infrastructure\ --startup-project .\GitInsight.API\
     ```
