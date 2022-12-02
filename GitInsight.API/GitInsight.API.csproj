@@ -25,5 +25,4 @@
   <ItemGroup>
     <ProjectReference Include="..\GitInsight.Infrastructure\GitInsight.Infrastructure.csproj" />
   </ItemGroup>
-
 </Project>

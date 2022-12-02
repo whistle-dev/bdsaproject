@@ -15,4 +15,4 @@ builder.Services.AddMsalAuthentication(options =>
 
 await builder.Build().RunAsync();
 
-builder.Services.AddHttpClient<IGitInsightService, GitInsightService>(client => client.BaseAddress = new Uri("https://localhost:5285/"));
+//builder.Services.AddHttpClient<IGitInsightService, GitInsightService>(client => client.BaseAddress = new Uri("https://localhost:5285/"));
