@@ -1,5 +1,8 @@
 ﻿@page "/"
 
+@using GitInsight.Blazor.Services
+@using System.Globalization
+
 <PageTitle>Index</PageTitle>
 
 <h1>GitInsights™</h1>
@@ -33,7 +36,23 @@
 
 <p class="alert alert-info">Confirm <strong>@username/@repository</strong> with mode <strong>@mode</strong>.</p>
 
-<ColumnChart></ColumnChart>
+<div>
+
+    @* <RadzenChart>
+        <RadzenColumnSeries Data="@commits" CategoryProperty="Date" Title="@author" LineType="LineType.Dashed"
+            ValueProperty="Commits">
+            <RadzenSeriesDataLabels Visible="@showDataLabels" />
+        </RadzenColumnSeries>
+        <RadzenColumnSeries Data="@commits" CategoryProperty="Date" Title="@author" ValueProperty="Commits">
+            <RadzenSeriesDataLabels Visible="@showDataLabels" />
+        </RadzenColumnSeries>
+        <RadzenColumnOptions Radius="5" />
+        <RadzenValueAxis Min="0" step="1">
+            <RadzenGridLines Visible="true" />
+            <RadzenAxisTitle Text="Amount Commits" />
+        </RadzenValueAxis>
+    </RadzenChart> *@
+</div>
 
 @code {
   string username;
@@ -42,6 +61,25 @@
   string authorValue = "author";
   string frequencyValue = "frequency";
   private string authorUsername;
+
+  bool showDataLabels = false;
+
+  
+  GitInsightService gitInsightService = new GitInsightService();
+
+
+  @* [Inject]
+  public IGitInsightService GitInsightService { get; set; } *@
+
+  class DataItem
+  {
+      public string Date { get; set; }
+      public double Commits { get; set; }
+
+
+  }
+    
+
 
   void OnChange(object value, string name)
   {
@@ -55,6 +93,16 @@
     repository = value;
   }
   private void RunProgram() {
+    
+
+    if(mode == "author") {
+      GitInsightService.GetCommitsFromAuthorAsync(username, repository, authorUsername);
+    } else {
+      GitInsightService.GetCommitsFrequencyAsync(username, repository);
+    }
+
     Console.WriteLine("Run Gitinsights!");
+
   }
+  
 }
