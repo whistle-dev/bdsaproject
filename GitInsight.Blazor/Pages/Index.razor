@@ -38,12 +38,17 @@
 
 <div>
 
+
+  <RadzenChart>
+    <RadzenColumnSeries @ref="chart" Data="@chartData" CategoryProperty="Date" ValueProperty="Commits" />
+  </RadzenChart>
+
     @* <RadzenChart>
-        <RadzenColumnSeries Data="@commits" CategoryProperty="Date" Title="@author" LineType="LineType.Dashed"
+        <RadzenColumnSeries Data="@commits" CategoryProperty="Date" Title="@username" LineType="LineType.Dashed"
             ValueProperty="Commits">
             <RadzenSeriesDataLabels Visible="@showDataLabels" />
         </RadzenColumnSeries>
-        <RadzenColumnSeries Data="@commits" CategoryProperty="Date" Title="@author" ValueProperty="Commits">
+        <RadzenColumnSeries Data="@commits" CategoryProperty="Date" Title="@username" ValueProperty="Commits">
             <RadzenSeriesDataLabels Visible="@showDataLabels" />
         </RadzenColumnSeries>
         <RadzenColumnOptions Radius="5" />
@@ -62,24 +67,23 @@
   string frequencyValue = "frequency";
   private string authorUsername;
 
+  private RadzenColumnSeries<GitInsight.Blazor.Pages.Index.DataItem> chart;
+
+  private Dictionary<string, int> commits = new Dictionary<string, int>();
+  private DataItem[] chartData = new DataItem[0];
+
   bool showDataLabels = false;
 
-  
-  GitInsightService gitInsightService = new GitInsightService();
-
-
-  @* [Inject]
-  public IGitInsightService GitInsightService { get; set; } *@
+  [Inject]
+  public IGitInsightService GitInsightService { get; set; }
 
   class DataItem
   {
       public string Date { get; set; }
       public double Commits { get; set; }
-
-
   }
-    
 
+  
 
   void OnChange(object value, string name)
   {
@@ -92,17 +96,13 @@
   void SetRepository(string value) {
     repository = value;
   }
-  private void RunProgram() {
-    
-
+  private async Task RunProgram() {
     if(mode == "author") {
-      GitInsightService.GetCommitsFromAuthorAsync(username, repository, authorUsername);
+      commits = await GitInsightService.GetCommitsFromAuthorAsync(username, repository, authorUsername);
     } else {
-      GitInsightService.GetCommitsFrequencyAsync(username, repository);
+      commits = await GitInsightService.GetCommitsFrequencyAsync(username, repository);
     }
 
-    Console.WriteLine("Run Gitinsights!");
-
+    chartData = commits.Select(x => new DataItem { Date = x.Key, Commits = x.Value }).ToArray();
   }
-  
 }
