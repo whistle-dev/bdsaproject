@@ -19,11 +19,13 @@ public class GitInsightService : IGitInsightService
 
     public async Task<Dictionary<string, Dictionary<string, int>>> GetCommitsAuthorAsync(string username, string reponame)
     {
-        return await _httpClient.GetFromJsonAsync<Dictionary<string, Dictionary<string, int>>>($"Author/{username}/{reponame}");
+        var result = await _httpClient.GetFromJsonAsync<Dictionary<string, Dictionary<string, int>>>($"Author/{username}/{reponame}");
+        return result;
     }
 
-    public async Task<Dictionary<string, int>> GetCommitsFromAuthorAsync(string username, string reponame, string author)
+    public async Task<Dictionary<string, Dictionary<string, int>>> GetCommitsFromAuthorAsync(string username, string reponame, string author)
     {
-        return await _httpClient.GetFromJsonAsync<Dictionary<string, int>>($"Author/{username}/{reponame}/{author}");
+        var result = await _httpClient.GetFromJsonAsync<Dictionary<string, Dictionary<string, int>>>($"Author/{username}/{reponame}/{author}");
+        return result;
     }
 }
