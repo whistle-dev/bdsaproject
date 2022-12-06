@@ -57,9 +57,20 @@ else
 }
 else if (mode == "author")
 {
+  if(!showAllAuthors) {
+
+    <p class="alert alert-info">Showing commits from author: @authorUsername</p>
+    <RadzenChart>
+        <RadzenColumnSeries @ref="chart" Data="@chartData" CategoryProperty="Date" ValueProperty="Commits" />
+    </RadzenChart>
+    
+
+  } else {
+    <p class="alert alert-info">Showing all authors.</p>
     <RadzenChart>
         <RadzenColumnSeries @ref="chart" Data="@chartData" CategoryProperty="Author" ValueProperty="Commits" />
     </RadzenChart>
+  }
 } else
 {
    <RadzenChart>
@@ -82,7 +93,11 @@ else if (mode == "author")
   private Dictionary<string, int> commitsFreq = new Dictionary<string, int>();
   
   private Dictionary<string, Dictionary<string, int>> commitsAuth = new Dictionary<string, Dictionary<string, int>>();
+  
+  private Dictionary<string, int> commitsFromAuthor = new Dictionary<string, int>();
   private DataItem[] chartData = new DataItem[0];
+
+  bool showAllAuthors = true;
 
   bool showDataLabels = false;
 
@@ -100,6 +115,8 @@ else if (mode == "author")
 
   void OnChange(object value, string name)
   {
+    authorUsername = "";
+    chartData = new DataItem[0];
     var str = value is IEnumerable<int> ? string.Join(", ", (IEnumerable<int>)value) : value;
   }
 
@@ -111,34 +128,32 @@ else if (mode == "author")
   }
 
   void SetAuthor(string value) {
+    chartData = new DataItem[0];
+    showAllAuthors = false;
     authorUsername = value;
   }
   private async Task RunProgram() {
     if(mode == "author") {
-      if(string.IsNullOrEmpty(authorUsername)) {
-              chartData = new DataItem[0];
-              commitsAuth = await GitInsightService.GetCommitsAuthorAsync(username, repository);
+      if(!string.IsNullOrEmpty(authorUsername)) {
+
+        commitsFromAuthor = await GitInsightService.GetCommitsFromAuthorAsync(username, repository, authorUsername);
       }
-        
-        
       else {
-              chartData = new DataItem[0];
-          commitsAuth = await GitInsightService.GetCommitsFromAuthorAsync(username, repository, authorUsername);
-    
+        commitsAuth = await GitInsightService.GetCommitsAuthorAsync(username, repository);
+          
       }
     } else {
-            chartData = new DataItem[0];
-      commitsFreq = await GitInsightService.GetCommitsFrequencyAsync(username, repository);
+          commitsFreq = await GitInsightService.GetCommitsFrequencyAsync(username, repository);
       
     }
 
     if(mode == "author") {
-      //clear chart
-
-      chartData = commitsAuth.Select(x => new DataItem { Author = x.Key, Commits = x.Value.Values.Sum() }).ToArray();
+      if(string.IsNullOrEmpty(authorUsername)) {
+        chartData = commitsAuth.Select(x => new DataItem { Author = x.Key, Commits = x.Value.Values.Sum() }).ToArray();
+      } else {
+        chartData = commitsFromAuthor.Select(x => new DataItem { Date = x.Key, Commits = x.Value }).ToArray();
+      }
     } else {
-      //clear chart
-
       chartData = commitsFreq.Select(x => new DataItem { Date = x.Key, Commits = x.Value }).ToArray();
     }
 
