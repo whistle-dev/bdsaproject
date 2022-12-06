@@ -1,47 +1,31 @@
-// namespace GitInsight.Blazor.Services;
+namespace GitInsight.Blazor.Services;
+using System.Net.Http;
+using System.Net.Http.Json;
 
-// public class GitInsightService : IGitInsightService
-// {
-//     private readonly HttpClient _httpClient;
+public class GitInsightService : IGitInsightService
+{
+    private readonly HttpClient _httpClient;
 
-//     public GitInsightService(HttpClient httpClient)
-//     {
-//         _httpClient = httpClient;
-//     }
+    public GitInsightService(HttpClient httpClient)
+    {
+        _httpClient = httpClient;
+    }
 
-//     public async Task<Dictionary<string, int>> GetCommitsFrequencyAsync(string username, string reponame)
-//     {
-//         var response = await _httpClient.GetAsync($"Frequency/{username}/{reponame}");
-//         if (response.IsSuccessStatusCode)
-//         {
-//             return await response.Content.ReadFromJsonAsync<Dictionary<string, int>>();
-//         }
+    public async Task<Dictionary<string, int>> GetCommitsFrequencyAsync(string username, string reponame)
+    {
+        var result = await _httpClient.GetFromJsonAsync<Dictionary<string, int>>($"Frequency/{username}/{reponame}");
+        return result;
+    }
 
-//         return null;
-//     }
+    public async Task<Dictionary<string, Dictionary<string, int>>> GetCommitsAuthorAsync(string username, string reponame)
+    {
+        var result = await _httpClient.GetFromJsonAsync<Dictionary<string, Dictionary<string, int>>>($"Author/{username}/{reponame}");
+        return result;
+    }
 
-//     public async Task<Dictionary<string, Dictionary<string, int>>> GetCommitsAuthorAsync(string username, string reponame)
-//     {
-//         var response = await _httpClient.GetAsync($"Author/{username}/{reponame}");
-//         if (response.IsSuccessStatusCode)
-//         {
-//             return await response.Content.ReadFromJsonAsync<Dictionary<string, Dictionary<string, int>>>();
-//         }
-
-//         return null;
-//     }
-
-//     public async Task<Dictionary<string, int>> GetCommitsFromAuthorAsync(string username, string reponame, string author)
-//     {
-//         var response = await _httpClient.GetAsync($"Author/{username}/{reponame}/{author}");
-//         if (response.IsSuccessStatusCode)
-//         {
-//             return await response.Content.ReadFromJsonAsync<Dictionary<string, int>>();
-//         }
-
-//         return null;
-//     }
-
-
-
-// }
+    public async Task<Dictionary<string, int>> GetCommitsFromAuthorAsync(string username, string reponame, string author)
+    {
+        var result = await _httpClient.GetFromJsonAsync<Dictionary<string, int>>($"Author/{username}/{reponame}/{author}");
+        return result;
+    }
+}

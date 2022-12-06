@@ -31,3 +31,9 @@
     ```bash
     dotnet watch run --project .\GitInsight.API\
     ```
+
+5.  In another terminal instance in root folder, run the following command
+
+    ```bash
+    dotnet watch run --project .\GitInsight.Blazor\
+    ```

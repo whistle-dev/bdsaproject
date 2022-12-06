@@ -1,5 +1,8 @@
 ﻿@page "/"
 
+@using GitInsight.Blazor.Services
+@using System.Globalization
+
 <PageTitle>Index</PageTitle>
 
 <h1>GitInsights™</h1>
@@ -8,12 +11,20 @@
 
 
 <div class="row">
-  <div class="col-3">
+  <div class="col-2">
     <RadzenTextBox Placeholder="Username" Class="w-100" @oninput="@(args => SetUsername(args.Value.ToString()))" />
   </div>
-  <div class="col-3">
+  <div class="col-2">
     <RadzenTextBox Placeholder="Repository" Class="w-100" @oninput="@(args => SetRepository(args.Value.ToString()))" />
   </div>
+  
+  @if(mode == "author") {
+    <div class="col-2">
+    <RadzenTextBox Placeholder="Author" Class="w-100" @oninput="@(args => SetAuthor(args.Value.ToString()))" />
+  </div>
+  } 
+  
+
   <div class="col-3">
     <RadzenSelectBar @bind-Value=@mode TValue="string" Change=@(args => OnChange(args, "SelectBar with single selection"))>
         <Items>
@@ -26,14 +37,48 @@
     <RadzenButton Click=@RunProgram Text="Run!" ButtonStyle="ButtonStyle.Secondary"></RadzenButton> 
   </div>
 </div>
-       
-  @* @if(mode == "author") {
-    <input type="text" placeholder="Author Username" @bind="@authorUsername" @oninput="@(ui => {authorUsername = (string) ui.Value;})" />
-  } *@
 
-<p class="alert alert-info">Confirm <strong>@username/@repository</strong> with mode <strong>@mode</strong>.</p>
 
-<ColumnChart></ColumnChart>
+@if (string.IsNullOrEmpty(username))
+{
+    <p class="alert alert-info">Please enter username and repository.</p>
+}
+else
+{
+    <p class="alert alert-info">Username: @username, Repository: @repository</p>
+}
+
+<div>
+
+
+@if (chartData.Length == 0)
+{
+    <p class="alert alert-info">No data to display.</p>
+}
+else if (mode == "author")
+{
+  if(!showAllAuthors) {
+
+    <p class="alert alert-info">Showing commits from author: @authorUsername</p>
+    <RadzenChart>
+        <RadzenColumnSeries @ref="chart" Data="@chartData" CategoryProperty="Date" ValueProperty="Commits" />
+    </RadzenChart>
+    
+
+  } else {
+    <p class="alert alert-info">Showing all authors.</p>
+    <RadzenChart>
+        <RadzenColumnSeries @ref="chart" Data="@chartData" CategoryProperty="Author" ValueProperty="Commits" />
+    </RadzenChart>
+  }
+} else
+{
+   <RadzenChart>
+    <RadzenColumnSeries @ref="chart" Data="@chartData" CategoryProperty="Date" ValueProperty="Commits" />
+  </RadzenChart>
+    
+}
+</div>
 
 @code {
   string username;
@@ -43,8 +88,35 @@
   string frequencyValue = "frequency";
   private string authorUsername;
 
+  private RadzenColumnSeries<GitInsight.Blazor.Pages.Index.DataItem> chart;
+
+  private Dictionary<string, int> commitsFreq = new Dictionary<string, int>();
+  
+  private Dictionary<string, Dictionary<string, int>> commitsAuth = new Dictionary<string, Dictionary<string, int>>();
+  
+  private Dictionary<string, int> commitsFromAuthor = new Dictionary<string, int>();
+  private DataItem[] chartData = new DataItem[0];
+
+  bool showAllAuthors = true;
+
+  bool showDataLabels = false;
+
+  [Inject]
+  public IGitInsightService GitInsightService { get; set; }
+
+  class DataItem
+  {
+      public string Author { get; set; }
+      public string Date { get; set; }
+      public double Commits { get; set; }
+  }
+
+  
+
   void OnChange(object value, string name)
   {
+    authorUsername = "";
+    chartData = new DataItem[0];
     var str = value is IEnumerable<int> ? string.Join(", ", (IEnumerable<int>)value) : value;
   }
 
@@ -54,7 +126,37 @@
   void SetRepository(string value) {
     repository = value;
   }
-  private void RunProgram() {
-    Console.WriteLine("Run Gitinsights!");
+
+  void SetAuthor(string value) {
+    chartData = new DataItem[0];
+    showAllAuthors = false;
+    authorUsername = value;
+  }
+  private async Task RunProgram() {
+    if(mode == "author") {
+      if(!string.IsNullOrEmpty(authorUsername)) {
+
+        commitsFromAuthor = await GitInsightService.GetCommitsFromAuthorAsync(username, repository, authorUsername);
+      }
+      else {
+        commitsAuth = await GitInsightService.GetCommitsAuthorAsync(username, repository);
+          
+      }
+    } else {
+          commitsFreq = await GitInsightService.GetCommitsFrequencyAsync(username, repository);
+      
+    }
+
+    if(mode == "author") {
+      if(string.IsNullOrEmpty(authorUsername)) {
+        chartData = commitsAuth.Select(x => new DataItem { Author = x.Key, Commits = x.Value.Values.Sum() }).ToArray();
+      } else {
+        chartData = commitsFromAuthor.Select(x => new DataItem { Date = x.Key, Commits = x.Value }).ToArray();
+      }
+    } else {
+      chartData = commitsFreq.Select(x => new DataItem { Date = x.Key, Commits = x.Value }).ToArray();
+    }
+
+    
   }
 }
